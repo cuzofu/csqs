@@ -13,7 +13,7 @@ import {
 } from 'antd';
 import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import StandardFormRow from 'components/StandardFormRow';
+import StandardFormRow from '../../components/StandardFormRow';
 
 import styles from './Credit.less';
 
@@ -129,7 +129,6 @@ export default class Credit extends PureComponent {
         formValues: values,
       });
 
-      console.log(values);
       dispatch({
         type: 'credit/fetch',
         payload: values,
@@ -155,7 +154,7 @@ export default class Credit extends PureComponent {
               })(
                 <Select
                   mode="multiple"
-                  style={{ maxWidth: 286, width: '100%' }}
+                  style={{ maxWidth: 286, width: '80%' }}
                   placeholder="选择诚信等级"
                 >
                   {creditLevelList.map(level => (
@@ -203,7 +202,7 @@ export default class Credit extends PureComponent {
               })(
                 <Select
                   mode="multiple"
-                  style={{ maxWidth: 286, width: '100%' }}
+                  style={{ maxWidth: 286, width: '80%' }}
                   placeholder="选择诚信等级"
                 >
                   {creditLevelList.map(level => (
@@ -232,12 +231,12 @@ export default class Credit extends PureComponent {
         </Row>
         <StandardFormRow title="诚信分值" grid last>
           <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-            <Col md={4} sm={24}>
+            <Col md={8} sm={24}>
               <FormItem label="起">
                 {getFieldDecorator('creditScoreStart')(<InputNumber placeholder="请输入最小分值" style={{ width: '100%' }} />)}
               </FormItem>
             </Col>
-            <Col md={4} sm={24}>
+            <Col md={8} sm={24}>
               <FormItem label="止">
                 {getFieldDecorator('creditScoreEnd')(<InputNumber placeholder="请输入最大分值" style={{ width: '100%' }} />)}
               </FormItem>
@@ -246,12 +245,12 @@ export default class Credit extends PureComponent {
         </StandardFormRow>
         <StandardFormRow title="不良行为次数" grid last>
           <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-            <Col md={4} sm={24}>
+            <Col md={8} sm={24}>
               <FormItem label="起">
                 {getFieldDecorator('badBehaviorAmountStart')(<InputNumber placeholder="请输入最少次数" style={{ width: '100%' }} />)}
               </FormItem>
             </Col>
-            <Col md={4} sm={24}>
+            <Col md={8} sm={24}>
               <FormItem label="止">
                 {getFieldDecorator('badBehaviorAmountEnd')(<InputNumber placeholder="请输入最多次数" style={{ width: '100%' }} />)}
               </FormItem>
@@ -260,12 +259,12 @@ export default class Credit extends PureComponent {
         </StandardFormRow>
         <StandardFormRow title="良好行为次数" grid last>
           <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-            <Col md={4} sm={24}>
+            <Col md={8} sm={24}>
               <FormItem label="起">
                 {getFieldDecorator('goodBehaviorAmountStart')(<InputNumber placeholder="请输入最少次数" style={{ width: '100%' }} />)}
               </FormItem>
             </Col>
-            <Col md={4} sm={24}>
+            <Col md={8} sm={24}>
               <FormItem label="止">
                 {getFieldDecorator('goodBehaviorAmountEnd')(<InputNumber placeholder="请输入最多次数" style={{ width: '100%' }} />)}
               </FormItem>
