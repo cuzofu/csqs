@@ -5,6 +5,7 @@ import { getFakeChartData } from './mock/chart';
 import { getProfileBasicData } from './mock/profile';
 import { getProfileAdvancedData } from './mock/profile';
 import { getNotices } from './mock/notices';
+import { getOrgCredit } from './mock/credit';
 import { format, delay } from 'roadhog-api-doc';
 
 // 是否禁用代理
@@ -51,6 +52,8 @@ const proxy = {
   ],
   'GET /api/project/notice': getNotice,
   'GET /api/activities': getActivities,
+  // 企业诚信查询
+  'GET /api/org/credit': getOrgCredit,
   'GET /api/rule': getRule,
   'POST /api/rule': {
     $params: {
