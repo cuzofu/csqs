@@ -79,5 +79,10 @@ export async function queryNotices() {
 }
 
 export async function queryOrgCredit(params) {
-  return request(`/api/org/credit?${stringify(params)}`)
+  return request(`/api/credit/org/search?${stringify(params)}`)
 }
+
+export async function fakeStatisticsData(params) {
+  return request(`/api/credit/org/statistics?${stringify(params)}`)
+}
+

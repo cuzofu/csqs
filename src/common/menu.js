@@ -2,14 +2,18 @@ import { isUrl } from '../utils/utils';
 
 const menuData = [
   {
-    name: '查询统计',
+    name: '企业诚信',
     icon: 'form',
-    path: 'statistics',
+    path: 'credit/org',
     authority: 'admin',
     children: [
       {
-        name: '诚信',
-        path: 'credit',
+        name: '诚信查询',
+        path: 'search',
+      },
+      {
+        name: '诚信统计',
+        path: 'statistics',
       },
     ],
   },

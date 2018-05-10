@@ -11,11 +11,11 @@ import {
   Button,
   InputNumber,
 } from 'antd';
-import StandardTable from '../../components/StandardTable';
-import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import StandardFormRow from '../../components/StandardFormRow';
+import StandardTable from '../../../components/StandardTable';
+import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
+import StandardFormRow from '../../../components/StandardFormRow';
 
-import styles from './Credit.less';
+import styles from './Search.less';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -36,9 +36,9 @@ const creditLevelList = [
   },
 ];
 
-@connect(({ credit, loading }) => ({
-  credit,
-  loading: loading.models.credit,
+@connect(({ creditOrgSearch, loading }) => ({
+  creditOrgSearch,
+  loading: loading.effects['creditOrgSearch/fetch'],
 }))
 @Form.create()
 export default class Credit extends PureComponent {
@@ -51,7 +51,7 @@ export default class Credit extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'credit/fetch',
+      type: 'creditOrgSearch/fetch',
     });
   }
 
@@ -83,7 +83,7 @@ export default class Credit extends PureComponent {
     }
 
     dispatch({
-      type: 'credit/fetch',
+      type: 'creditOrgSearch/fetch',
       payload: params,
     });
   };
@@ -95,7 +95,7 @@ export default class Credit extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'credit/fetch',
+      type: 'creditOrgSearch/fetch',
       payload: {},
     });
   };
@@ -130,7 +130,7 @@ export default class Credit extends PureComponent {
       });
 
       dispatch({
-        type: 'credit/fetch',
+        type: 'creditOrgSearch/fetch',
         payload: values,
       });
     });
@@ -280,7 +280,7 @@ export default class Credit extends PureComponent {
   }
 
   render() {
-    const { credit: { data }, loading } = this.props;
+    const { creditOrgSearch: { data }, loading } = this.props;
     const { selectedRows } = this.state;
 
     const columns = [
@@ -320,7 +320,7 @@ export default class Credit extends PureComponent {
     ];
 
     return (
-      <PageHeaderLayout title="查询表格">
+      <PageHeaderLayout title="诚信查询">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>

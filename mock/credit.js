@@ -24,6 +24,10 @@ for (let i = 0; i < 50; i += 1) {
   });
 }
 
+const allCreditOrg = {
+
+};
+
 export function getOrgCredit(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
@@ -142,5 +146,11 @@ export function getOrgCredit(req, res, u) {
     res.json(result);
   } else {
     return result;
+  }
+}
+
+export function fakeStatisticsData() {
+  return {
+    allCreditOrg,
   }
 }

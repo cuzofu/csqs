@@ -1,7 +1,7 @@
 import { queryOrgCredit } from '../services/api';
 
 export default {
-  namespace: 'credit',
+  namespace: 'creditOrgSearch',
 
   state: {
     data: {
