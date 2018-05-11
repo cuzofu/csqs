@@ -24,10 +24,6 @@ for (let i = 0; i < 50; i += 1) {
   });
 }
 
-const allCreditOrg = {
-
-};
-
 export function getOrgCredit(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
@@ -149,8 +145,63 @@ export function getOrgCredit(req, res, u) {
   }
 }
 
-export function fakeStatisticsData() {
-  return {
-    allCreditOrg,
+export function fakeStatisticsData(req, res, u) {
+  let url = u;
+  if (!url || Object.prototype.toString.call(url) !== '[object String]') {
+    url = req.url; // eslint-disable-line
   }
+
+  const params = parse(url, true).query;
+
+  const fakeBadBehaviorData = [7, 5, 4, 2, 4, 7, 5, 6, 5, 9, 6, 3];
+  const badBehaviorDataLastYear = [];
+  const fakeGoodBehaviorData = [12, 15, 10, 2, 4, 8, 5, 1, 9, 9, 3, 15];
+  const goodBehaviorDataLastYear = [];
+  const district = ['西陵区', '伍家区', '点军区', '猇亭区', '夷陵区', '远安县', '兴山县', '秭归县', '长阳县', '五峰县', '宜都市', '当阳市', '枝江市'];
+  const badBehaviorGroupByDistrict = [];
+  const goodBehaviorGroupByDistrict = [];
+
+  if (params.startTime && params.endTime) {
+    for (let i = 0; i < fakeBadBehaviorData.length; i += 1) {
+      badBehaviorDataLastYear.push({
+        x: `2017年${i+1}月`,
+        y: fakeBadBehaviorData[i],
+      });
+    }
+    for (let i = 0; i < fakeGoodBehaviorData.length; i += 1) {
+      goodBehaviorDataLastYear.push({
+        x: `2017年${i+1}月`,
+        y: fakeGoodBehaviorData[i],
+      });
+    }
+
+    for (let i = 0; i < 12; i += 1) {
+      badBehaviorGroupByDistrict.push({
+        x: `${district[i]}`,
+        y: Math.floor(Math.random() * 100) + 20,
+      });
+      goodBehaviorGroupByDistrict.push({
+        x: `${district[i]}`,
+        y: Math.floor(Math.random() * 100) + 20,
+      });
+    }
+  }
+
+  const result = {
+    badBehaviorDataLastYear,
+    goodBehaviorDataLastYear,
+    badBehaviorGroupByDistrict,
+    goodBehaviorGroupByDistrict,
+  };
+
+  if (res && res.json) {
+    res.json(result);
+  } else {
+    return result;
+  }
+}
+
+export default {
+  getOrgCredit,
+  fakeStatisticsData,
 }

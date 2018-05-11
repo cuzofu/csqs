@@ -1,12 +1,13 @@
 import { fakeStatisticsData } from '../services/api';
 
 export default {
-  namespace: 'statistics',
+  namespace: 'creditOrgStatistics',
 
   state: {
-    allCreditOrg: [],
-    badBehavior: [],
-    goodBehavior: [],
+    badBehaviorDataLastYear: [],
+    goodBehaviorDataLastYear: [],
+    badBehaviorGroupByDistrict: [],
+    goodBehaviorGroupByDistrict: [],
     loading: false,
   },
 
@@ -18,12 +19,13 @@ export default {
         payload: response,
       });
     },
-    *fetchAllCreditOrg({ payload }, { call, put }) {
+    *fetchDataGroupByDistrict({ payload }, { call, put }) {
       const response = yield call(fakeStatisticsData, payload);
       yield put({
         type: 'save',
         payload: {
-          salesData: response.salesData,
+          badBehaviorGroupByDistrict: response.badBehaviorGroupByDistrict,
+          goodBehaviorGroupByDistrict: response.goodBehaviorGroupByDistrict,
         },
       });
     },
@@ -38,9 +40,10 @@ export default {
     },
     clear() {
       return {
-        allCreditOrg: [],
-        badBehavior: [],
-        goodBehavior: [],
+        badBehaviorDataLastYear: [],
+        goodBehaviorDataLastYear: [],
+        badBehaviorGroupByDistrict: [],
+        goodBehaviorGroupByDistrict: [],
       };
     },
   },

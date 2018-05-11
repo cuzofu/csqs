@@ -262,7 +262,7 @@ class BasicLayout extends React.PureComponent {
               ]}
               copyright={
                 <Fragment>
-                  Copyright <Icon type="copyright" /> 2018 蚂蚁金服体验技术部出品
+                  Copyright <Icon type="copyright" /> 2018 湖北升思科技股份有限公司政务产品部出品
                 </Fragment>
               }
             />

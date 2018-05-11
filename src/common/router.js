@@ -8,7 +8,6 @@ let routerDataCache;
 const modelNotExisted = (app, model) =>
   // eslint-disable-next-line
   !app._models.some(({ namespace }) => {
-    console.log(namespace);
     return namespace === model.substring(model.lastIndexOf('/') + 1);
   });
 
@@ -21,7 +20,6 @@ const dynamicWrapper = (app, models, component) => {
       if (modelNotExisted(app, model)) {
         // eslint-disable-next-line
         app.model(require(`../models/${model}`).default);
-        console.log(model);
       }
     });
     return props => {
@@ -77,9 +75,9 @@ export const getRouterData = app => {
     '/credit/org/search': {
       component: dynamicWrapper(app, ['creditOrgSearch'], () => import('../routes/Credit/Org/Search')),
     },
-    // '/credit/org/statistics': {
-    //   component: dynamicWrapper(app, ['credit'], () => import('../routes/Statistics/Credit')),
-    // },
+    '/credit/org/statistics': {
+      component: dynamicWrapper(app, ['creditOrgStatistics'], () => import('../routes/Credit/Org/Statistics')),
+    },
     '/dashboard/analysis': {
       component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Analysis')),
     },

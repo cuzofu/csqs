@@ -55,11 +55,29 @@ export default class Credit extends PureComponent {
     });
   }
 
-  clearCreditLevel = () => {
-    const { form } = this.props;
+  clearCreditLevel = (e) => {
+    e.preventDefault();
+    const { dispatch, form } = this.props;
     form.setFieldsValue({
       creditLevel: [],
     });
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+
+      const values = {
+        ...fieldsValue,
+      };
+
+      this.setState({
+        formValues: values,
+      });
+
+      dispatch({
+        type: 'creditOrgSearch/fetch',
+        payload: values,
+      });
+    });
+
   };
 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
