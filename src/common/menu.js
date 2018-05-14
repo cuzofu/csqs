@@ -18,6 +18,18 @@ const menuData = [
     ],
   },
   {
+    name: '建筑工程',
+    icon: 'form',
+    path: 'eng',
+    authority: 'admin',
+    children: [
+      {
+        name: '在建工程',
+        path: 'search',
+      },
+    ],
+  },
+  {
     name: 'dashboard',
     icon: 'dashboard',
     path: 'dashboard',

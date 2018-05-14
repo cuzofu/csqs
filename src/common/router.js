@@ -78,6 +78,9 @@ export const getRouterData = app => {
     '/credit/org/statistics': {
       component: dynamicWrapper(app, ['creditOrgStatistics'], () => import('../routes/Credit/Org/Statistics')),
     },
+    '/eng/search': {
+      component: dynamicWrapper(app, [], () => import('../routes/Eng/Search')),
+    },
     '/dashboard/analysis': {
       component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Analysis')),
     },
