@@ -86,3 +86,6 @@ export async function fakeStatisticsData(params) {
   return request(`/api/credit/org/statistics?${stringify(params)}`)
 }
 
+export async function fakeEngListData(params) {
+  return request(`/api/eng/search?${stringify(params)}`)
+}

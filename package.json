@@ -1,5 +1,5 @@
 {
-  "name": "ant-design-pro",
+  "name": "csqs",
   "version": "1.3.0",
   "description": "An out-of-box UI solution for enterprise applications",
   "private": true,
@@ -23,6 +23,7 @@
   "dependencies": {
     "@antv/data-set": "^0.8.0",
     "@babel/polyfill": "^7.0.0-beta.36",
+    "ant-design-pro": "^1.3.0",
     "antd": "^3.4.3",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "babel-runtime": "^6.9.2",

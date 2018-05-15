@@ -1,18 +1,28 @@
 import React, { Component } from 'react';
+import { connect } from 'dva';
 import {
   Form,
   Card,
+  Row,
+  Col,
+  Input,
+  Select,
+  DatePicker,
+  Icon,
+  Button,
+  InputNumber,
 } from 'antd';
+import TagSelect from 'ant-design-pro/lib/TagSelect';
 
 import StandardTable from 'components/StandardTable';
 import StandardFormRow from 'components/StandardFormRow';
-import TagSelect from 'components/TagSelect';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 import styles from './Search.less';
 
 const FormItem = Form.Item;
-
+const { RangePicker } = DatePicker;
+const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 const columns = [
   {
     title: '项目名称',
@@ -27,6 +37,8 @@ const columns = [
     sorter: true,
     align: 'center',
     index: 2,
+    needTotal: true,
+    render: val => `${val}万元`,
   },
   {
     title: '面积',
@@ -35,6 +47,8 @@ const columns = [
     sorter: true,
     align: 'center',
     index: 3,
+    needTotal: true,
+    render: val => `${val}m²`,
   },
   {
     title: '公里数',
@@ -43,6 +57,8 @@ const columns = [
     sorter: true,
     align: 'center',
     index: 4,
+    needTotal: true,
+    render: val => `${val}km`,
   },
   {
     title: '项目代码',
@@ -87,6 +103,7 @@ const columns = [
     sorter: true,
     align: 'center',
     index: 10,
+    render: val => `${val}`,
   },
   {
     title: '开工年份',
@@ -95,6 +112,7 @@ const columns = [
     sorter: true,
     align: 'center',
     index: 11,
+    render: val => `${val}年`,
   },
   {
     title: '建成年份',
@@ -103,6 +121,7 @@ const columns = [
     sorter: true,
     align: 'center',
     index: 12,
+    render: val => `${val}年`,
   },
   {
     title: '建设单位',
@@ -167,27 +186,46 @@ const columns = [
   },
   {
     title: '勘察设计',
-    key: 'kcsj',
+    key: 'kcdw',
     index: 16,
     children: [
       {
         title: '名称',
-        dataIndex: 'kcsjName',
+        dataIndex: 'kcdwName',
       },
       {
         title: '法人',
-        dataIndex: 'kcsjFr',
+        dataIndex: 'kcdwFr',
       },
       {
         title: '电话',
-        dataIndex: 'kcsjTel',
+        dataIndex: 'kcdwTel',
+      },
+    ],
+  },
+  {
+    title: '设计单位',
+    key: 'sjdw',
+    index: 17,
+    children: [
+      {
+        title: '名称',
+        dataIndex: 'sjdwName',
+      },
+      {
+        title: '法人',
+        dataIndex: 'sjdwFr',
+      },
+      {
+        title: '电话',
+        dataIndex: 'sjdwTel',
       },
     ],
   },
   {
     title: '检测单位',
     key: 'jcdw',
-    index: 17,
+    index: 18,
     children: [
       {
         title: '名称',
@@ -205,16 +243,21 @@ const columns = [
   },
 ];
 
+@connect(({ eng, loading }) => ({
+  eng,
+  loading: loading.effects['eng/fetch'],
+}))
 @Form.create()
 export default class Search extends Component {
   state = {
+    expandForm: false,
     selectedRows: [],
     selectedColumns: [],
     formValues: {},
   };
 
   componentDidMount() {
-    const {form} = this.props;
+    const {form, dispatch} = this.props;
     form.setFieldsValue({
       category: [
         'name',
@@ -227,16 +270,14 @@ export default class Search extends Component {
         'cantonCode',
         'startDate',
         'bjrq',
-        'kgnf',
-        'jcnf',
         'jsdw',
         'sgdw',
-        'jldw',
-        'kcsj',
-        'jcdw',
       ],
     });
     this.handleColumnsFormSubmit();
+    dispatch({
+      type: 'eng/fetch',
+    });
   }
 
   handleColumnsFormSubmit = () => {
@@ -281,15 +322,260 @@ export default class Search extends Component {
     }, 0);
   };
 
+  handleStandardTableChange = (pagination, filtersArg, sorter) => {
+    const { dispatch } = this.props;
+    const { formValues } = this.state;
+
+    const filters = Object.keys(filtersArg).reduce((obj, key) => {
+      const newObj = { ...obj };
+      newObj[key] = getValue(filtersArg[key]);
+      return newObj;
+    }, {});
+
+    const params = {
+      currentPage: pagination.current,
+      pageSize: pagination.pageSize,
+      ...formValues,
+      ...filters,
+    };
+    if (sorter.field) {
+      params.sorter = `${sorter.field}_${sorter.order}`;
+    }
+
+    dispatch({
+      type: 'eng/fetch',
+      payload: params,
+    });
+
+  };
+
+  handleFormReset = () => {
+    const { form, dispatch } = this.props;
+    form.resetFields();
+    this.setState({
+      formValues: {},
+    });
+
+    dispatch({
+      type: 'eng/fetch',
+      payload: {},
+    });
+
+  };
+
+  toggleForm = () => {
+    this.setState({
+      expandForm: !this.state.expandForm,
+    });
+  };
+
+  handleSelectRows = rows => {
+    this.setState({
+      selectedRows: rows,
+    });
+  };
+
+  handleSearch = e => {
+    e.preventDefault();
+
+    const { dispatch, form } = this.props;
+
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+
+      const values = {
+        ...fieldsValue,
+      };
+
+      this.setState({
+        formValues: values,
+      });
+
+      console.log(values);
+      dispatch({
+        type: 'eng/fetch',
+        payload: values,
+      });
+
+    });
+  };
+
+  renderQueryItemSimpleForm() {
+    const { getFieldDecorator } = this.props.form;
+
+    return (
+      <Card bordered={false}>
+        <Form onSubmit={this.handleSearch} layout="inline">
+          <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
+            <Col md={8} sm={24}>
+              <FormItem label="工程名称">
+                {getFieldDecorator('name')(<Input placeholder="请输入" style={{ width: '100%' }} />)}
+              </FormItem>
+            </Col>
+            <Col md={8} sm={24}>
+              <FormItem label="项目地址">
+                {getFieldDecorator('address')(<Input placeholder="请输入" style={{ width: '100%' }} />)}
+              </FormItem>
+            </Col>
+            <Col md={8} sm={24}>
+            <span className={styles.submitButtons}>
+              <Button type="primary" htmlType="submit">
+                查询
+              </Button>
+              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
+                重置
+              </Button>
+              <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
+                展开 <Icon type="down" />
+              </a>
+            </span>
+            </Col>
+          </Row>
+        </Form>
+      </Card>
+    );
+  }
+
+  renderQueryItemAdvancedForm() {
+    const { getFieldDecorator } = this.props.form;
+
+    return (
+      <Card bordered={false}>
+        <Form onSubmit={this.handleSearch} layout="inline">
+          <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+            <Col md={8} sm={24}>
+              <FormItem label="工程名称">
+                {getFieldDecorator('name')(<Input placeholder="请输入" style={{ width: '100%' }} />)}
+              </FormItem>
+            </Col>
+            <Col md={8} sm={24}>
+              <FormItem label="项目地址">
+                {getFieldDecorator('address')(<Input placeholder="请输入" style={{ width: '100%' }} />)}
+              </FormItem>
+            </Col>
+            <Col md={8} sm={24}>
+            <span className={styles.submitButtons}>
+              <Button type="primary" htmlType="submit">
+                查询
+              </Button>
+              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
+                重置
+              </Button>
+              <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
+                收起 <Icon type="up" />
+              </a>
+            </span>
+            </Col>
+          </Row>
+          <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+            <Col md={8} sm={24}>
+              <FormItem label="建设单位">
+                {getFieldDecorator('jsdwName')(<Input placeholder="请输入" style={{ width: '100%' }} />)}
+              </FormItem>
+            </Col>
+            <Col md={8} sm={24}>
+              <FormItem label="施工单位">
+                {getFieldDecorator('sgdwName')(<Input placeholder="请输入" style={{ width: '100%' }} />)}
+              </FormItem>
+            </Col>
+            <Col md={8} sm={24}>
+              <FormItem label="监理单位">
+                {getFieldDecorator('jldwName')(<Input placeholder="请输入" style={{ width: '100%' }} />)}
+              </FormItem>
+            </Col>
+          </Row>
+          <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+            <Col md={8} sm={24}>
+              <FormItem label="勘察单位">
+                {getFieldDecorator('kcdwName')(<Input placeholder="请输入" style={{ width: '100%' }} />)}
+              </FormItem>
+            </Col>
+            <Col md={8} sm={24}>
+              <FormItem label="设计单位">
+                {getFieldDecorator('sjdwName')(<Input placeholder="请输入" style={{ width: '100%' }} />)}
+              </FormItem>
+            </Col>
+            <Col md={8} sm={24}>
+              <FormItem label="检测单位">
+                {getFieldDecorator('jcdwName')(<Input placeholder="请输入" style={{ width: '100%' }} />)}
+              </FormItem>
+            </Col>
+          </Row>
+          <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
+            <Col md={6} sm={24}>
+              <FormItem label="总投资">
+                {getFieldDecorator('investment')(<InputNumber placeholder="请输入" style={{ width: '100%' }} />)}
+              </FormItem>
+            </Col>
+            <Col md={6} sm={24}>
+              <FormItem label="面积">
+                {getFieldDecorator('area')(<InputNumber placeholder="请输入" style={{ width: '100%' }} />)}
+              </FormItem>
+            </Col>
+            <Col md={6} sm={24}>
+              <FormItem label="公里数">
+                {getFieldDecorator('length')(<InputNumber placeholder="请输入" style={{ width: '100%' }} />)}
+              </FormItem>
+            </Col>
+            <Col md={6} sm={24}>
+              <FormItem label="建设性质">
+                {getFieldDecorator('jsxz')(<Input placeholder="请输入" style={{ width: '100%' }} />)}
+              </FormItem>
+            </Col>
+          </Row>
+          <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+            <Col md={6} sm={24}>
+              <FormItem label="项目代码">
+                {getFieldDecorator('code')(<Input placeholder="请输入" style={{ width: '100%' }} />)}
+              </FormItem>
+            </Col>
+            <Col md={6} sm={24}>
+              <FormItem label="地区区划">
+                {getFieldDecorator('cantonCode')(<InputNumber placeholder="请输入" style={{ width: '100%' }} />)}
+              </FormItem>
+            </Col>
+            <Col md={6} sm={24}>
+              <FormItem label="开工年份">
+                {getFieldDecorator('kgnf')(<InputNumber placeholder="请输入" style={{ width: '100%' }} />)}
+              </FormItem>
+            </Col>
+            <Col md={6} sm={24}>
+              <FormItem label="建成年份">
+                {getFieldDecorator('jcnf')(<InputNumber placeholder="请输入" style={{ width: '100%' }} />)}
+              </FormItem>
+            </Col>
+          </Row>
+          <Row gutter={{ md: 12, lg: 24, xl: 48 }}>
+            <Col md={12} sm={24}>
+              <FormItem label="开工日期">
+                {getFieldDecorator('startDate')(<RangePicker style={{ width: '100%' }} placeholder={['开始日期', '结束日期']} />)}
+              </FormItem>
+            </Col>
+            <Col md={12} sm={24}>
+              <FormItem label="报监日期">
+                {getFieldDecorator('bjrq')(<RangePicker style={{ width: '100%' }} placeholder={['开始日期', '结束日期']} />)}
+              </FormItem>
+            </Col>
+          </Row>
+        </Form>
+      </Card>
+    );
+  }
+
+  renderQueryItemForm() {
+    return this.state.expandForm ? this.renderQueryItemAdvancedForm() : this.renderQueryItemSimpleForm();
+  }
+
   render() {
 
-    const { loading, form } = this.props;
+    const { eng: { data }, loading, form } = this.props;
     const { selectedColumns, selectedRows } = this.state;
     const { getFieldDecorator } = form;
 
     return (
       <PageHeaderLayout title="在建工程">
-        <Card bordered={false}>
+        <div className={styles.tableListForm}>{this.renderQueryItemForm()}</div>
+        <Card style={{ marginTop: 24 }} bordered={false}>
           <Form layout="inline">
             <StandardFormRow title="统计项目" block style={{ paddingBottom: 11 }}>
               <FormItem>
@@ -310,7 +596,8 @@ export default class Search extends Component {
                     <TagSelect.Option value="jsdw">建设单位</TagSelect.Option>
                     <TagSelect.Option value="sgdw">施工单位</TagSelect.Option>
                     <TagSelect.Option value="jldw">监理单位</TagSelect.Option>
-                    <TagSelect.Option value="kcsj">勘察设计</TagSelect.Option>
+                    <TagSelect.Option value="kcdw">勘察单位</TagSelect.Option>
+                    <TagSelect.Option value="sjdw">设计单位</TagSelect.Option>
                     <TagSelect.Option value="jcdw">检测单位</TagSelect.Option>
                   </TagSelect>
                 )}
@@ -323,8 +610,10 @@ export default class Search extends Component {
             <StandardTable
               selectedRows={selectedRows}
               loading={loading}
-              data={[]}
+              data={data}
               columns={selectedColumns}
+              onSelectRow={this.handleSelectRows}
+              onChange={this.handleStandardTableChange}
             />
           </div>
         </Card>
