@@ -9,6 +9,7 @@ import {
   Tabs,
   DatePicker,
   Form,
+  Modal,
 } from 'antd';
 import numeral from 'numeral';
 import {
@@ -43,6 +44,8 @@ for (let i = 0; i < 7; i += 1) {
 export default class Statistics extends Component {
   state = {
     rangePickerValue: getTimeDistance('month'),
+    modalTotalBadBehaviorLastYearVisible: false,
+    modalTotalGoodBehaviorLastYearVisible: false,
   };
 
   componentDidMount() {
@@ -68,6 +71,18 @@ export default class Statistics extends Component {
       type: 'creditOrgStatistics/clear',
     });
   }
+
+  setModalTotalBadBehaviorLastYearVisible = (visible) => {
+    this.setState({
+      modalTotalBadBehaviorLastYearVisible: visible,
+    });
+  };
+
+  setModalTotalGoodBehaviorLastYearVisible = (visible) => {
+    this.setState({
+      modalTotalGoodBehaviorLastYearVisible: visible,
+    });
+  };
 
   handleRangePickerChange = rangePickerValue => {
 
@@ -197,6 +212,7 @@ export default class Statistics extends Component {
             </Col>
             <Col {...topColResponsiveProps}>
               <ChartCard
+                onClick={() => this.setModalTotalBadBehaviorLastYearVisible(true)}
                 loading={loading}
                 bordered={false}
                 title="不良行为次数"
@@ -211,9 +227,24 @@ export default class Statistics extends Component {
               >
                 <MiniArea color="#975FE4" data={badBehaviorDataLastYear} />
               </ChartCard>
+              <Modal
+                title="不良行为次数详情"
+                visible={this.state.modalTotalBadBehaviorLastYearVisible}
+                onOk={() => this.setModalTotalBadBehaviorLastYearVisible(false)}
+                onCancel={() => this.setModalTotalBadBehaviorLastYearVisible(false)}
+              >
+                <div style={{maxHeight: '520px', overflow: 'auto'}}>
+                  <p>some contents...</p>
+                  <p>some contents...</p>
+                  <p>some contents...</p>
+                  <p>some contents...</p>
+                  <p>some contents...</p>
+                </div>
+              </Modal>
             </Col>
             <Col {...topColResponsiveProps}>
               <ChartCard
+                onClick={() => this.setModalTotalGoodBehaviorLastYearVisible(true)}
                 loading={loading}
                 bordered={false}
                 title="良好行为次数"
@@ -228,6 +259,16 @@ export default class Statistics extends Component {
               >
                 <MiniArea color="#975FE4" data={goodBehaviorDataLastYear} />
               </ChartCard>
+              <Modal
+                title="良好行为次数详情"
+                visible={this.state.modalTotalGoodBehaviorLastYearVisible}
+                onOk={() => this.setModalTotalGoodBehaviorLastYearVisible(false)}
+                onCancel={() => this.setModalTotalGoodBehaviorLastYearVisible(false)}
+              >
+                <p>some contents...</p>
+                <p>some contents...</p>
+                <p>some contents...</p>
+              </Modal>
             </Col>
           </Row>
         </Fragment>
