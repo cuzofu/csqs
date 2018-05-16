@@ -1,5 +1,6 @@
 import { parse } from 'url';
 import Mock from 'mockjs';
+import Moment from 'moment';
 
 const jsxz = ['新建', '扩建', '改建和技术改造', '迁建', '其他'];
 const jsdwFr = [
@@ -518,7 +519,7 @@ for (let i = 0; i < 50; i += 1) {
     code: '42050016156165156156',
     jsxz: jsxz[Math.floor(Math.random() * 5)],
     address: `宜昌市高新区兰台路${i+1}号`,
-    cantonCode: cantonCode[Math.floor(Math.random() * 14)].name,
+    cantonCode: cantonCode[Math.floor(Math.random() * 14)].code,
     startDate: Mock.mock('@date("yyyy-MM-dd")'),
     bjrq: Mock.mock('@date("yyyy-MM-dd")'),
     kgnf: Mock.mock('@date("yyyy")'),
@@ -611,6 +612,149 @@ export function getEngList(req, res, u) {
     dataSource = dataSource.filter(data =>
       data.jcdwName.indexOf(params.jcdwName) > -1
     );
+  }
+
+  // 总投资
+  if (params.investmentStart && params.investmentEnd) {
+    const investmentStart = params.investmentStart / 1;
+    const investmentEnd = params.investmentEnd / 1;
+    if (investmentStart >= investmentEnd) {
+      dataSource = dataSource.filter(data =>
+        data.investment <= investmentStart && data.investment >= investmentEnd
+      );
+    } else {
+      dataSource = dataSource.filter(data => {
+        return data.investment >= investmentStart && data.investment <= investmentEnd
+      });
+    }
+  } else if (params.investmentStart) {
+    dataSource = dataSource.filter(data =>
+      data.investment >= (params.investmentStart / 1)
+    );
+  } else if (params.investmentEnd) {
+    dataSource = dataSource.filter(data =>
+      data.investment <= (params.investmentEnd / 1)
+    );
+  }
+
+  // 面积
+  if (params.areaStart && params.areaEnd) {
+    const areaStart = params.areaStart / 1;
+    const areaEnd = params.areaEnd / 1;
+    if (areaStart >= areaEnd) {
+      dataSource = dataSource.filter(data =>
+        data.area <= areaStart && data.area >= areaEnd
+      );
+    } else {
+      dataSource = dataSource.filter(data => {
+        return data.area >= areaStart && data.area <= areaEnd
+      });
+    }
+  } else if (params.areaStart) {
+    dataSource = dataSource.filter(data =>
+      data.area >= (params.areaStart / 1)
+    );
+  } else if (params.areaEnd) {
+    dataSource = dataSource.filter(data =>
+      data.area <= (params.areaEnd / 1)
+    );
+  }
+
+  // 公里数
+  if (params.lengthStart && params.lengthEnd) {
+    const lengthStart = params.lengthStart / 1;
+    const lengthEnd = params.lengthEnd / 1;
+    if (lengthStart >= lengthEnd) {
+      dataSource = dataSource.filter(data =>
+        data.length <= lengthStart && data.length >= lengthEnd
+      );
+    } else {
+      dataSource = dataSource.filter(data => {
+        return data.length >= lengthStart && data.length <= lengthEnd
+      });
+    }
+  } else if (params.lengthStart) {
+    dataSource = dataSource.filter(data =>
+      data.length >= (params.lengthStart / 1)
+    );
+  } else if (params.lengthEnd) {
+    dataSource = dataSource.filter(data =>
+      data.length <= (params.lengthEnd / 1)
+    );
+  }
+
+  if (params.jsxz) {
+    const jsxzList = params.jsxz.split(',');
+    let filterDataSource = [];
+    jsxzList.forEach(val => {
+      filterDataSource = filterDataSource.concat(
+        [...dataSource].filter(data => data.jsxz === val)
+      );
+    });
+    dataSource = filterDataSource;
+  }
+
+  // 项目代码
+  if (params.code) {
+    dataSource = dataSource.filter(data =>
+      data.code.indexOf(params.code) > -1
+    );
+  }
+
+  // 地区区划
+  if (params.cantonCode) {
+    const cantonCodeList = params.cantonCode.split(',');
+    let filterDataSource = [];
+    cantonCodeList.forEach(val => {
+      filterDataSource = filterDataSource.concat(
+        [...dataSource].filter(data => data.cantonCode === val)
+      );
+    });
+    dataSource = filterDataSource;
+  }
+
+  // 开工年份
+  if (params.kgnf) {
+    dataSource = dataSource.filter(data =>
+      data.kgnf === params.kgnf
+    );
+  }
+
+  // 建成年份
+  if (params.jcnf) {
+    dataSource = dataSource.filter(data =>
+      data.jcnf === params.jcnf
+    );
+  }
+
+  // 开工日期
+  if (params.startDate) {
+    const startDateList = params.startDate.split(',');
+    const min = startDateList[0];
+    const max = startDateList[1];
+    dataSource = dataSource.filter(data => {
+      const kgrq = Moment(data.startDate).unix();
+      if (min <= max) {
+        return kgrq >= min && kgrq <= max
+      } else {
+        return kgrq <= min && kgrq >= max
+      }
+    });
+  }
+
+  // 报监日期
+  if (params.bjrq) {
+    const bjrqList = params.bjrq.split(',');
+    const min = bjrqList[0];
+    const max = bjrqList[1];
+    dataSource = dataSource.filter(data => {
+      const bjrq = Moment(data.bjrq).unix();
+      if (min <= max) {
+        return bjrq >= min && bjrq <= max
+      } else {
+        return bjrq <= min && bjrq >= max
+      }
+    });
   }
 
   let pageSize = 10;

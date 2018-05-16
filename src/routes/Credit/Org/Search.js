@@ -140,7 +140,7 @@ export default class Credit extends PureComponent {
 
       const values = {
         ...fieldsValue,
-        creditLevel: fieldsValue.creditLevel.join(','),
+        creditLevel: fieldsValue.creditLevel && fieldsValue.creditLevel.join(','),
       };
 
       this.setState({

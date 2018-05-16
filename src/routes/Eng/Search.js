@@ -21,8 +21,71 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './Search.less';
 
 const FormItem = Form.Item;
+const { Option } = Select;
 const { RangePicker } = DatePicker;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
+
+const jsxz = ['新建', '扩建', '改建和技术改造', '迁建', '其他'];
+
+const cantonCodeList = [
+  {
+    code: '420501',
+    name: '市辖区',
+  },
+  {
+    code: '420502',
+    name: '西陵区',
+  },
+  {
+    code: '420503',
+    name: '伍家岗区',
+  },
+  {
+    code: '420504',
+    name: '点军区',
+  },
+  {
+    code: '420505',
+    name: '猇亭区',
+  },
+  {
+    code: '420506',
+    name: '夷陵区',
+  },
+  {
+    code: '420525',
+    name: '远安县',
+  },
+  {
+    code: '420526',
+    name: '兴山县',
+  },
+  {
+    code: '420527',
+    name: '秭归县',
+  },
+  {
+    code: '420528',
+    name: '长阳县',
+  },
+  {
+    code: '420529',
+    name: '五峰县',
+  },
+  {
+    code: '420581',
+    name: '宜都市',
+  },
+  {
+    code: '420582',
+    name: '当阳市',
+  },
+  {
+    code: '420583',
+    name: '枝江市',
+  },
+];
+
 const columns = [
   {
     title: '项目名称',
@@ -87,6 +150,15 @@ const columns = [
     sorter: true,
     align: 'center',
     index: 8,
+    render: val => {
+      let rtn = '';
+      cantonCodeList.forEach( canton => {
+        if (val === canton.code) {
+          rtn = canton.name;
+        }
+      });
+      return rtn;
+    },
   },
   {
     title: '计划开工日期',
@@ -375,6 +447,48 @@ export default class Search extends Component {
     });
   };
 
+  clearJsxzSelectOption = (e) => {
+    e.preventDefault();
+    const { form } = this.props;
+    form.setFieldsValue({
+      jsxz: [],
+    });
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+
+      const values = {
+        ...fieldsValue,
+      };
+
+      this.setState({
+        formValues: values,
+      });
+
+    });
+
+  };
+
+  clearCantonSelectOption = (e) => {
+    e.preventDefault();
+    const { form } = this.props;
+    form.setFieldsValue({
+      cantonCode: [],
+    });
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+
+      const values = {
+        ...fieldsValue,
+      };
+
+      this.setState({
+        formValues: values,
+      });
+
+    });
+
+  };
+
   handleSearch = e => {
     e.preventDefault();
 
@@ -383,8 +497,41 @@ export default class Search extends Component {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
 
+      let kgrq;
+      if (fieldsValue.startDate && fieldsValue.startDate[0] && fieldsValue.startDate[1]) {
+        const dateStart = fieldsValue.startDate[0];
+        dateStart.hour(0);
+        dateStart.minute(0);
+        dateStart.second(0);
+        dateStart.millisecond(0);
+        const dateEnd = fieldsValue.startDate[1];
+        dateEnd.hour(0);
+        dateEnd.minute(0);
+        dateEnd.second(0);
+        dateEnd.millisecond(0);
+        kgrq = [dateStart.unix(), dateEnd.unix()];
+      }
+      let bjrq;
+      if (fieldsValue.bjrq && fieldsValue.bjrq[0] && fieldsValue.bjrq[1]) {
+        const dateStart = fieldsValue.bjrq[0];
+        dateStart.hour(0);
+        dateStart.minute(0);
+        dateStart.second(0);
+        dateStart.millisecond(0);
+        const dateEnd = fieldsValue.bjrq[1];
+        dateEnd.hour(0);
+        dateEnd.minute(0);
+        dateEnd.second(0);
+        dateEnd.millisecond(0);
+        bjrq = [dateStart.unix(), dateEnd.unix()];
+      }
+
       const values = {
         ...fieldsValue,
+        jsxz: fieldsValue.jsxz && fieldsValue.jsxz.join(','),
+        cantonCode: fieldsValue.cantonCode && fieldsValue.cantonCode.join(','),
+        startDate: kgrq && kgrq.join(','),
+        bjrq: bjrq && bjrq.join(','),
       };
 
       this.setState({
@@ -418,17 +565,17 @@ export default class Search extends Component {
               </FormItem>
             </Col>
             <Col md={8} sm={24}>
-            <span className={styles.submitButtons}>
-              <Button type="primary" htmlType="submit">
-                查询
-              </Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
-                重置
-              </Button>
-              <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-                展开 <Icon type="down" />
-              </a>
-            </span>
+              <span className={styles.submitButtons}>
+                <Button type="primary" htmlType="submit">
+                  查询
+                </Button>
+                <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
+                  重置
+                </Button>
+                <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
+                  展开 <Icon type="down" />
+                </a>
+              </span>
             </Col>
           </Row>
         </Form>
@@ -454,17 +601,17 @@ export default class Search extends Component {
               </FormItem>
             </Col>
             <Col md={8} sm={24}>
-            <span className={styles.submitButtons}>
-              <Button type="primary" htmlType="submit">
-                查询
-              </Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
-                重置
-              </Button>
-              <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-                收起 <Icon type="up" />
-              </a>
-            </span>
+              <span className={styles.submitButtons}>
+                <Button type="primary" htmlType="submit">
+                  查询
+                </Button>
+                <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
+                  重置
+                </Button>
+                <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
+                  收起 <Icon type="up" />
+                </a>
+              </span>
             </Col>
           </Row>
           <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
@@ -501,29 +648,77 @@ export default class Search extends Component {
               </FormItem>
             </Col>
           </Row>
-          <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
-            <Col md={6} sm={24}>
-              <FormItem label="总投资">
-                {getFieldDecorator('investment')(<InputNumber placeholder="请输入" style={{ width: '100%' }} />)}
-              </FormItem>
+          <Row gutter={{ md: 12, lg: 24, xl: 48 }}>
+            <Col md={12} sm={24}>
+              <StandardFormRow title="总投资" grid last>
+                <Row gutter={{ md: 12, lg: 24, xl: 48 }}>
+                  <Col md={12} sm={24}>
+                    <FormItem label="起">
+                      {getFieldDecorator('investmentStart')(<InputNumber min={0} placeholder="请输入最小投资额" style={{ width: '100%' }} />)}
+                    </FormItem>
+                  </Col>
+                  <Col md={12} sm={24}>
+                    <FormItem label="止">
+                      {getFieldDecorator('investmentEnd')(<InputNumber min={0} placeholder="请输入最大投资额" style={{ width: '100%' }} />)}
+                    </FormItem>
+                  </Col>
+                </Row>
+              </StandardFormRow>
             </Col>
-            <Col md={6} sm={24}>
-              <FormItem label="面积">
-                {getFieldDecorator('area')(<InputNumber placeholder="请输入" style={{ width: '100%' }} />)}
-              </FormItem>
+            <Col md={12} sm={24}>
+              <StandardFormRow title="面积" grid last>
+                <Row gutter={{ md: 12, lg: 24, xl: 48 }}>
+                  <Col md={12} sm={24}>
+                    <FormItem label="起">
+                      {getFieldDecorator('areaStart')(<InputNumber min={0} placeholder="请输入最小面积" style={{ width: '100%' }} />)}
+                    </FormItem>
+                  </Col>
+                  <Col md={12} sm={24}>
+                    <FormItem label="止">
+                      {getFieldDecorator('areaEnd')(<InputNumber min={0} placeholder="请输入最大面积" style={{ width: '100%' }} />)}
+                    </FormItem>
+                  </Col>
+                </Row>
+              </StandardFormRow>
             </Col>
-            <Col md={6} sm={24}>
-              <FormItem label="公里数">
-                {getFieldDecorator('length')(<InputNumber placeholder="请输入" style={{ width: '100%' }} />)}
-              </FormItem>
+          </Row>
+          <Row gutter={{ md: 12, lg: 24, xl: 48 }}>
+            <Col md={12} sm={24}>
+              <StandardFormRow title="公里数" grid last>
+                <Row gutter={{ md: 12, lg: 24, xl: 48 }}>
+                  <Col md={12} sm={24}>
+                    <FormItem label="起">
+                      {getFieldDecorator('lengthStart')(<InputNumber min={0} placeholder="请输入最小公里数" style={{ width: '100%' }} />)}
+                    </FormItem>
+                  </Col>
+                  <Col md={12} sm={24}>
+                    <FormItem label="止">
+                      {getFieldDecorator('lengthEnd')(<InputNumber min={0} placeholder="请输入最大公里数" style={{ width: '100%' }} />)}
+                    </FormItem>
+                  </Col>
+                </Row>
+              </StandardFormRow>
             </Col>
-            <Col md={6} sm={24}>
+            <Col md={12} sm={24}>
               <FormItem label="建设性质">
-                {getFieldDecorator('jsxz')(<Input placeholder="请输入" style={{ width: '100%' }} />)}
+                {getFieldDecorator('jsxz', {
+                  initialValue: [],
+                })(
+                  <Select
+                    mode="multiple"
+                    style={{ width: '80%' }}
+                    placeholder="选择建设性质"
+                  >
+                    {jsxz.map((val) => (
+                      <Option key={val} value={val}>{val}</Option>
+                    ))}
+                  </Select>
+                )}
+                <a className={styles.clearSelectOptionTrigger} onClick={this.clearJsxzSelectOption}>清除</a>
               </FormItem>
             </Col>
           </Row>
-          <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+          <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
             <Col md={6} sm={24}>
               <FormItem label="项目代码">
                 {getFieldDecorator('code')(<Input placeholder="请输入" style={{ width: '100%' }} />)}
@@ -531,7 +726,20 @@ export default class Search extends Component {
             </Col>
             <Col md={6} sm={24}>
               <FormItem label="地区区划">
-                {getFieldDecorator('cantonCode')(<InputNumber placeholder="请输入" style={{ width: '100%' }} />)}
+                {getFieldDecorator('cantonCode', {
+                  initialValue: [],
+                })(
+                  <Select
+                    mode="multiple"
+                    style={{ width: '80%' }}
+                    placeholder="选择地区区划"
+                  >
+                    {cantonCodeList.map((canton) => (
+                      <Option key={canton.code} value={canton.code}>{canton.name}</Option>
+                    ))}
+                  </Select>
+                )}
+                <a className={styles.clearSelectOptionTrigger} onClick={this.clearCantonSelectOption}>清除</a>
               </FormItem>
             </Col>
             <Col md={6} sm={24}>
@@ -553,7 +761,7 @@ export default class Search extends Component {
             </Col>
             <Col md={12} sm={24}>
               <FormItem label="报监日期">
-                {getFieldDecorator('bjrq')(<RangePicker style={{ width: '100%' }} placeholder={['开始日期', '结束日期']} />)}
+                {getFieldDecorator('bjrq')(<RangePicker onChange={this.onBjrqChange} style={{ width: '100%' }} placeholder={['开始日期', '结束日期']} />)}
               </FormItem>
             </Col>
           </Row>
