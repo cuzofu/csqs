@@ -81,6 +81,9 @@ export const getRouterData = app => {
     '/eng/search': {
       component: dynamicWrapper(app, ['eng'], () => import('../routes/Eng/Search')),
     },
+    '/eng/statistics': {
+      component: dynamicWrapper(app, ['engStatistics'], () => import('../routes/Eng/Statistics')),
+    },
     '/dashboard/analysis': {
       component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Analysis')),
     },

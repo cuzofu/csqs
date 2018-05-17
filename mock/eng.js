@@ -778,6 +778,187 @@ export function getEngList(req, res, u) {
   }
 }
 
+// 招投标项目
+const engTypeZtbDate = [
+  {
+    x: '公共建筑',
+    y: 4544,
+  },
+  {
+    x: '绿化工程',
+    y: 3321,
+  },
+  {
+    x: '市政工程',
+    y: 3113,
+  },
+  {
+    x: '住宅工程',
+    y: 2341,
+  },
+  {
+    x: '工业厂房',
+    y: 1231,
+  },
+  {
+    x: '构筑物',
+    y: 156,
+  },
+];
+
+// 施工合同项目
+const engTypeSghtDate = [
+  {
+    x: '公共建筑',
+    y: 5215,
+  },
+  {
+    x: '绿化工程',
+    y: 4562,
+  },
+  {
+    x: '市政工程',
+    y: 7854,
+  },
+  {
+    x: '住宅工程',
+    y: 4412,
+  },
+  {
+    x: '工业厂房',
+    y: 1125,
+  },
+  {
+    x: '构筑物',
+    y: 625,
+  },
+];
+
+// 施工许可项目
+const engTypeSgxkDate = [
+  {
+    x: '公共建筑',
+    y: 6512,
+  },
+  {
+    x: '绿化工程',
+    y: 5954,
+  },
+  {
+    x: '市政工程',
+    y: 8851,
+  },
+  {
+    x: '住宅工程',
+    y: 3521,
+  },
+  {
+    x: '工业厂房',
+    y: 2210,
+  },
+  {
+    x: '构筑物',
+    y: 686,
+  },
+];
+
+const engDataByStage = [
+  {
+    engType: '公共建筑',
+    data: [
+      {
+        stageType: 'ztb',
+        stageName: '招投标',
+        amount: 2563,
+        investment: 172123.42,
+        area: 129301,
+        length: 0,
+      },
+      {
+        stageType: 'sght',
+        stageName: '施工合同',
+        amount: 5651,
+        investment: 172123.42,
+        area: 129301,
+        length: 0,
+      },
+      {
+        stageType: 'sgxk',
+        stageName: '施工许可',
+        amount: 1235,
+        investment: 172123.42,
+        area: 129301,
+        length: 0,
+      },
+    ],
+  },
+  {
+    engType: '市政工程',
+    data: [
+      {
+        stageType: 'ztb',
+        stageName: '招投标',
+        amount: 2563,
+        investment: 172123.42,
+        area: 129301,
+        length: 0,
+      },
+      {
+        stageType: 'sght',
+        stageName: '施工合同',
+        amount: 5651,
+        investment: 172123.42,
+        area: 129301,
+        length: 0,
+      },
+      {
+        stageType: 'sgxk',
+        stageName: '施工许可',
+        amount: 1235,
+        investment: 172123.42,
+        area: 129301,
+        length: 0,
+      },
+    ],
+  },
+  {
+    engType: '绿化工程',
+    amount: 1239,
+    investment: 172123.42,
+    area: 129301,
+    length: 0,
+  },
+  {
+    engType: '住宅工程',
+    amount: 1239,
+    investment: 172123.42,
+    area: 129301,
+    length: 0,
+  },
+  {
+    engType: '工业厂房',
+    amount: 1239,
+    investment: 172123.42,
+    area: 129301,
+    length: 0,
+  },
+  {
+    engType: '构筑物',
+    amount: 1239,
+    investment: 172123.42,
+    area: 129301,
+    length: 0,
+  },
+];
+
+export const getEngAmountData = {
+  engTypeZtbDate,
+  engTypeSghtDate,
+  engTypeSgxkDate,
+  engDataByStage,
+};
+
 export default {
   getEngList,
+  getEngAmountData,
 }

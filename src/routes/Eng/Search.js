@@ -27,7 +27,7 @@ const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 
 const jsxz = ['新建', '扩建', '改建和技术改造', '迁建', '其他'];
 
-const cantonCodeList = [
+const districtCodeList = [
   {
     code: '420501',
     name: '市辖区',
@@ -152,7 +152,7 @@ const columns = [
     index: 8,
     render: val => {
       let rtn = '';
-      cantonCodeList.forEach( canton => {
+      districtCodeList.forEach( canton => {
         if (val === canton.code) {
           rtn = canton.name;
         }
@@ -734,7 +734,7 @@ export default class Search extends Component {
                     style={{ width: '80%' }}
                     placeholder="选择地区区划"
                   >
-                    {cantonCodeList.map((canton) => (
+                    {districtCodeList.map((canton) => (
                       <Option key={canton.code} value={canton.code}>{canton.name}</Option>
                     ))}
                   </Select>
@@ -813,7 +813,7 @@ export default class Search extends Component {
             </StandardFormRow>
           </Form>
         </Card>
-        <Card bordered={false}>
+        <Card>
           <div className={styles.tableList}>
             <StandardTable
               selectedRows={selectedRows}

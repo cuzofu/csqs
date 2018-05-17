@@ -89,3 +89,7 @@ export async function fakeStatisticsData(params) {
 export async function fakeEngListData(params) {
   return request(`/api/eng/search?${stringify(params)}`)
 }
+
+export async function fakeEngStatisticsData(params) {
+  return request(`/api/eng/statistics?${stringify(params)}`)
+}

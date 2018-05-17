@@ -104,6 +104,7 @@ class StandardTable extends PureComponent {
           />
         </div>
         <Table
+          bordered
           loading={loading}
           rowKey={rowKey || 'key'}
           rowSelection={rowSelection}

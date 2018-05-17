@@ -2,6 +2,22 @@ import { isUrl } from '../utils/utils';
 
 const menuData = [
   {
+    name: '建筑工程',
+    icon: 'form',
+    path: 'eng',
+    authority: 'admin',
+    children: [
+      {
+        name: '工程统计',
+        path: 'statistics',
+      },
+      {
+        name: '在建工程',
+        path: 'search',
+      },
+    ],
+  },
+  {
     name: '企业诚信',
     icon: 'form',
     path: 'credit/org',
@@ -14,18 +30,6 @@ const menuData = [
       {
         name: '诚信统计',
         path: 'statistics',
-      },
-    ],
-  },
-  {
-    name: '建筑工程',
-    icon: 'form',
-    path: 'eng',
-    authority: 'admin',
-    children: [
-      {
-        name: '在建工程',
-        path: 'search',
       },
     ],
   },
