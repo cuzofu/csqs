@@ -343,6 +343,7 @@ export default class Credit extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <StandardTable
+              selectDisable
               selectedRows={selectedRows}
               loading={loading}
               data={data}

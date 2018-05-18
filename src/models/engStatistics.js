@@ -7,8 +7,17 @@ export default {
     engTypeZtbDate: [],
     engTypeSghtDate: [],
     engTypeSgxkDate: [],
-    engDataByStage: [],
-    engDataByDistrict: [],
+    engGroupBarData: [],
+    engDataByStage: {
+      list: [],
+      pagination: {},
+      loading: false,
+    },
+    engDataByDistrict: {
+      list: [],
+      pagination: {},
+      loading: false,
+    },
   },
 
   effects: {
@@ -26,6 +35,8 @@ export default {
       return {
         ...state,
         ...payload,
+        engDataByStage: payload.engDataByStage,
+        engDataByDistrict: payload.engDataByDistrict,
       };
     },
     clear() {
@@ -33,8 +44,17 @@ export default {
         engTypeZtbDate: [],
         engTypeSghtDate: [],
         engTypeSgxkDate: [],
-        engDataByStage: [],
-        engDataByDistrict: [],
+        engGroupBarData: [],
+        engDataByStage: {
+          list: [],
+          pagination: {},
+          loading: false,
+        },
+        engDataByDistrict: {
+          list: [],
+          pagination: {},
+          loading: false,
+        },
       };
     },
   },

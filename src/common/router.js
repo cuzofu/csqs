@@ -72,17 +72,17 @@ export const getRouterData = app => {
     '/': {
       component: dynamicWrapper(app, ['user', 'login'], () => import('../layouts/BasicLayout')),
     },
+    '/eng/statistics': {
+      component: dynamicWrapper(app, ['engStatistics'], () => import('../routes/Eng/Statistics')),
+    },
+    '/eng/search': {
+      component: dynamicWrapper(app, ['eng'], () => import('../routes/Eng/Search')),
+    },
     '/credit/org/search': {
       component: dynamicWrapper(app, ['creditOrgSearch'], () => import('../routes/Credit/Org/Search')),
     },
     '/credit/org/statistics': {
       component: dynamicWrapper(app, ['creditOrgStatistics'], () => import('../routes/Credit/Org/Statistics')),
-    },
-    '/eng/search': {
-      component: dynamicWrapper(app, ['eng'], () => import('../routes/Eng/Search')),
-    },
-    '/eng/statistics': {
-      component: dynamicWrapper(app, ['engStatistics'], () => import('../routes/Eng/Statistics')),
     },
     '/dashboard/analysis': {
       component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Analysis')),

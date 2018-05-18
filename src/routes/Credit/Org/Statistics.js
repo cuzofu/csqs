@@ -199,7 +199,7 @@ export default class Statistics extends Component {
                   </Tooltip>
                 }
                 total={numeral(560).format('0,0')}
-                footer={<Field label="日均销售额" value={`￥${numeral(12423).format('0,0')}`} />}
+                footer={<Field label="日增数量" value={`${numeral(12).format('0,0')}`} />}
                 contentHeight={46}
               >
                 <Trend flag="up" style={{ marginRight: 16 }}>

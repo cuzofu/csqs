@@ -1,5 +1,6 @@
 import React, { PureComponent, Fragment } from 'react';
 import { Table, Alert } from 'antd';
+import PropTypes from 'prop-types';
 import styles from './index.less';
 
 function initTotalList(columns) {
@@ -12,7 +13,7 @@ function initTotalList(columns) {
   return totalList;
 }
 
-class StandardTable extends PureComponent {
+class ScrollTable extends PureComponent {
   constructor(props) {
     super(props);
     const { columns } = props;
@@ -63,7 +64,7 @@ class StandardTable extends PureComponent {
 
   renderTable = () => {
     const { selectedRowKeys, needTotalList } = this.state;
-    const { data: { list, pagination }, loading, columns, rowKey, selectDisable } = this.props;
+    const { data: { list, pagination }, loading, columns, rowKey, selectDisable, scroll } = this.props;
 
     const paginationProps = pagination && {
       showSizeChanger: true,
@@ -80,7 +81,7 @@ class StandardTable extends PureComponent {
     };
     if (selectDisable) {
       return (
-        <div className={styles.standardTable}>
+        <div className={styles.ScrollTable}>
           <div className={styles.tableAlert}>
             <Alert
               message={
@@ -111,13 +112,14 @@ class StandardTable extends PureComponent {
             dataSource={list}
             columns={columns}
             pagination={paginationProps}
+            scroll={scroll}
             onChange={this.handleTableChange}
           />
         </div>
       );
     } else {
       return (
-        <div className={styles.standardTable}>
+        <div className={styles.ScrollTable}>
           <Table
             bordered
             loading={loading}
@@ -125,6 +127,7 @@ class StandardTable extends PureComponent {
             dataSource={list}
             columns={columns}
             pagination={paginationProps}
+            scroll={scroll}
             onChange={this.handleTableChange}
           />
         </div>
@@ -137,4 +140,11 @@ class StandardTable extends PureComponent {
   }
 }
 
-export default StandardTable;
+ScrollTable.propTypes = {
+  scroll: PropTypes.shape({
+    x: PropTypes.number,
+    y: PropTypes.number,
+  }).isRequired,
+};
+
+export default ScrollTable;

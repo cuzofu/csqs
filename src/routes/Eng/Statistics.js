@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
+import { DataSet } from '@antv/data-set';
 
 import {
   Row,
@@ -10,31 +11,31 @@ import {
   Menu,
   Dropdown,
   DatePicker,
+  Tabs,
 } from 'antd';
 import numeral from 'numeral';
 import {
   Pie,
+  GroupBar,
 } from '../../components/Charts';
 
 import styles from './Statistics.less';
 
 import PageHeaderLayout from "../../layouts/PageHeaderLayout";
 import StandardTable from '../../components/StandardTable';
+import ScrollTable from '../../components/ScrollTable';
 import { getTimeDistance } from '../../utils/utils';
 
+const { TabPane } = Tabs;
 const { RangePicker } = DatePicker;
 
-const columns = [
+const columnsStage = [
   {
     title: '工程类型',
     dataIndex: 'engType',
-    key: 'engType',
-    index: 1,
   },
   {
-    title: '招投标',
-    key: 'ztb',
-    index: 2,
+    title: '招投标工程',
     children: [
       {
         title: '数量',
@@ -42,29 +43,24 @@ const columns = [
         align: 'center',
       },
       {
-        title: '投资额',
+        title: '投资额（万元）',
         dataIndex: 'ztbEngInvestment',
         align: 'center',
-        render: val => `${val}万元`,
       },
       {
-        title: '面积',
+        title: '面积（㎡）',
         dataIndex: 'ztbEngArea',
         align: 'center',
-        render: val => `${val}m²`,
       },
       {
-        title: '公里数',
+        title: '公里数（km）',
         dataIndex: 'ztbEngLength',
         align: 'center',
-        render: val => `${val}km`,
       },
     ],
   },
   {
-    title: '施工合同',
-    key: 'sght',
-    index: 2,
+    title: '施工合同工程',
     children: [
       {
         title: '数量',
@@ -72,29 +68,24 @@ const columns = [
         align: 'center',
       },
       {
-        title: '投资额',
+        title: '投资额（万元）',
         dataIndex: 'sghtEngInvestment',
         align: 'center',
-        render: val => `${val}万元`,
       },
       {
-        title: '面积',
+        title: '面积（㎡）',
         dataIndex: 'sghtEngArea',
         align: 'center',
-        render: val => `${val}m²`,
       },
       {
-        title: '公里数',
+        title: '公里数（km）',
         dataIndex: 'sghtEngLength',
         align: 'center',
-        render: val => `${val}km`,
       },
     ],
   },
   {
-    title: '施工许可',
-    key: 'sgxk',
-    index: 2,
+    title: '施工许可工程',
     children: [
       {
         title: '数量',
@@ -102,22 +93,203 @@ const columns = [
         align: 'center',
       },
       {
-        title: '投资额',
+        title: '投资额（万元）',
         dataIndex: 'sgxkEngInvestment',
         align: 'center',
-        render: val => `${val}万元`,
       },
       {
-        title: '面积',
+        title: '面积（㎡）',
         dataIndex: 'sgxkEngArea',
         align: 'center',
-        render: val => `${val}m²`,
       },
       {
-        title: '公里数',
+        title: '公里数（km）',
         dataIndex: 'sgxkEngLength',
         align: 'center',
-        render: val => `${val}km`,
+      },
+    ],
+  },
+];
+
+const columnsDistrict = [
+  {
+    title: '工程类型',
+    dataIndex: 'engType',
+    align: 'center',
+    fixed: 'left',
+    width: 100,
+  },
+  {
+    title: '市辖区',
+    children: [
+      {
+        title: '数量',
+        dataIndex: 'sxqEngAmount',
+        align: 'center',
+        width: 100,
+      },
+      {
+        title: '投资额（万元）',
+        dataIndex: 'sxqEngInvestment',
+        align: 'center',
+        width: 150,
+      },
+      {
+        title: '面积（㎡）',
+        dataIndex: 'sxqEngArea',
+        align: 'center',
+        width: 150,
+      },
+      {
+        title: '公里数（km）',
+        dataIndex: 'sxqEngLength',
+        align: 'center',
+        width: 150,
+      },
+    ],
+  },
+  {
+    title: '西陵区',
+    children: [
+      {
+        title: '数量',
+        dataIndex: 'xlqEngAmount',
+        align: 'center',
+        width: 100,
+      },
+      {
+        title: '投资额（万元）',
+        dataIndex: 'xlqEngInvestment',
+        align: 'center',
+        width: 150,
+      },
+      {
+        title: '面积（㎡）',
+        dataIndex: 'xlqEngArea',
+        align: 'center',
+        width: 150,
+      },
+      {
+        title: '公里数（km）',
+        dataIndex: 'xlqEngLength',
+        align: 'center',
+        width: 150,
+      },
+    ],
+  },
+  {
+    title: '伍家岗区',
+    children: [
+      {
+        title: '数量',
+        dataIndex: 'wjqEngAmount',
+        align: 'center',
+        width: 150,
+      },
+      {
+        title: '投资额（万元）',
+        dataIndex: 'wjqEngInvestment',
+        align: 'center',
+        width: 150,
+      },
+      {
+        title: '面积（㎡）',
+        dataIndex: 'wjqEngArea',
+        align: 'center',
+        width: 150,
+      },
+      {
+        title: '公里数（km）',
+        dataIndex: 'wjqEngLength',
+        align: 'center',
+        width: 150,
+      },
+    ],
+  },
+  {
+    title: '猇亭区',
+    children: [
+      {
+        title: '数量',
+        dataIndex: 'xtqEngAmount',
+        align: 'center',
+        width: 100,
+      },
+      {
+        title: '投资额（万元）',
+        dataIndex: 'xtqEngInvestment',
+        align: 'center',
+        width: 150,
+      },
+      {
+        title: '面积（㎡）',
+        dataIndex: 'xtqEngArea',
+        align: 'center',
+        width: 150,
+      },
+      {
+        title: '公里数（km）',
+        dataIndex: 'xtqEngLength',
+        align: 'center',
+        width: 150,
+      },
+    ],
+  },
+  {
+    title: '点军区',
+    children: [
+      {
+        title: '数量',
+        dataIndex: 'djqEngAmount',
+        align: 'center',
+        width: 100,
+      },
+      {
+        title: '投资额（万元）',
+        dataIndex: 'djqEngInvestment',
+        align: 'center',
+        width: 150,
+      },
+      {
+        title: '面积（㎡）',
+        dataIndex: 'djqEngArea',
+        align: 'center',
+        width: 150,
+      },
+      {
+        title: '公里数（km）',
+        dataIndex: 'djqEngLength',
+        align: 'center',
+        width: 150,
+      },
+    ],
+  },
+  {
+    title: '夷陵区',
+    children: [
+      {
+        title: '数量',
+        dataIndex: 'ylqEngAmount',
+        align: 'center',
+        width: 100,
+      },
+      {
+        title: '投资额（万元）',
+        dataIndex: 'ylqEngInvestment',
+        align: 'center',
+        width: 150,
+      },
+      {
+        title: '面积（㎡）',
+        dataIndex: 'ylqEngArea',
+        align: 'center',
+        width: 150,
+      },
+      {
+        title: '公里数（km）',
+        dataIndex: 'ylqkEngLength',
+        align: 'center',
+        width: 150,
       },
     ],
   },
@@ -188,11 +360,14 @@ export default class Statistics extends Component {
 
     const { engAmountType, engAmountDatePickerValue } = this.state;
     const { engStatistics, loading } = this.props;
+    console.log(engStatistics);
     const {
       engTypeZtbDate,
       engTypeSghtDate,
       engTypeSgxkDate,
       engDataByStage,
+      engDataByDistrict,
+      engGroupBarData,
     } = engStatistics;
 
     let engAmountPieData;
@@ -216,22 +391,125 @@ export default class Statistics extends Component {
         break;
     }
 
+    console.log(engGroupBarData);
+    const dv = new DataSet().createView().source(engGroupBarData);
+    dv.transform({
+      type: 'fold',
+      fields: ['公共建筑','市政工程','绿化工程','住宅工程','工业厂房','构筑物'], // 展开字段集
+      key: 'x', // key字段
+      value: 'y', // value字段
+    });
+    console.log(dv);
+
     return (
       <PageHeaderLayout title="工程统计">
 
-        <Card>
+        <Card
+          title="工程分阶段统计表格"
+          extra={
+            <div className={styles.datePickerExtraWrap}>
+              <div className={styles.datePickerExtra}>
+                <a className={this.isActive('today')} onClick={() => this.selectDate('today')}>
+                  今日
+                </a>
+                <a className={this.isActive('week')} onClick={() => this.selectDate('week')}>
+                  本周
+                </a>
+                <a className={this.isActive('month')} onClick={() => this.selectDate('month')}>
+                  本月
+                </a>
+                <a className={this.isActive('year')} onClick={() => this.selectDate('year')}>
+                  全年
+                </a>
+              </div>
+              <RangePicker value={engAmountDatePickerValue} onChange={this.handleRangePickerChange} style={{ width: 256 }} />
+            </div>
+          }
+        >
           <div className={styles.tableList}>
             <StandardTable
               selectedRows={[]}
               loading={loading}
               data={engDataByStage}
-              columns={columns}
+              columns={columnsStage}
             />
           </div>
         </Card>
 
+        <Card
+          style={{marginTop: 16}}
+          title="工程分区域统计表格"
+          extra={
+            <div className={styles.datePickerExtraWrap}>
+              <div className={styles.datePickerExtra}>
+                <a className={this.isActive('today')} onClick={() => this.selectDate('today')}>
+                  今日
+                </a>
+                <a className={this.isActive('week')} onClick={() => this.selectDate('week')}>
+                  本周
+                </a>
+                <a className={this.isActive('month')} onClick={() => this.selectDate('month')}>
+                  本月
+                </a>
+                <a className={this.isActive('year')} onClick={() => this.selectDate('year')}>
+                  全年
+                </a>
+              </div>
+              <RangePicker value={engAmountDatePickerValue} onChange={this.handleRangePickerChange} style={{ width: 256 }} />
+            </div>
+          }
+        >
+          <div className={styles.tableList}>
+            <ScrollTable
+              selectedRows={[]}
+              loading={loading}
+              data={engDataByDistrict}
+              columns={columnsDistrict}
+              scroll={{x: 3400}}
+            />
+          </div>
+        </Card>
+
+        <Card loading={loading} bodyStyle={{ padding: 0 }} style={{marginTop: 16}}>
+          <div className={styles.zztCard}>
+            <Tabs
+              tabBarExtraContent={
+                <div className={styles.datePickerExtraWrap}>
+                  <div className={styles.datePickerExtra}>
+                    <a className={this.isActive('today')} onClick={() => this.selectDate('today')}>
+                      今日
+                    </a>
+                    <a className={this.isActive('week')} onClick={() => this.selectDate('week')}>
+                      本周
+                    </a>
+                    <a className={this.isActive('month')} onClick={() => this.selectDate('month')}>
+                      本月
+                    </a>
+                    <a className={this.isActive('year')} onClick={() => this.selectDate('year')}>
+                      全年
+                    </a>
+                  </div>
+                  <RangePicker value={engAmountDatePickerValue} onChange={this.handleRangePickerChange} style={{ width: 256 }} />
+                </div>
+              }
+              size="large"
+              tabBarStyle={{ marginBottom: 16 }}
+            >
+              <TabPane tab="阶段" key="stage">
+                <Row>
+                  <Col xl={24} lg={12} md={12} sm={24} xs={24}>
+                    <div className={styles.zztBar}>
+                      <GroupBar height={295} title="按阶段统计" data={dv} />
+                    </div>
+                  </Col>
+                </Row>
+              </TabPane>
+            </Tabs>
+          </div>
+        </Card>
+
         <Row gutter={24} style={{marginTop: '16px'}}>
-          <Col xl={24} lg={24} md={24} sm={24} xs={24}>
+          <Col xl={12} lg={24} md={24} sm={24} xs={24}>
             <Card
               loading={loading}
               className={styles.engAmountCard}
@@ -265,7 +543,7 @@ export default class Statistics extends Component {
               }
             >
               <Row gutter={24}>
-                <Col xl={12} lg={24} md={24} sm={24} xs={24}>
+                <Col xl={24} lg={24} md={24} sm={24} xs={24}>
                   <h4 style={{ marginTop: 8, marginBottom: 32 }}>{engAmountPieSubTitle}</h4>
                   <Pie
                     hasLegend

@@ -14,8 +14,8 @@ import {
 } from 'antd';
 import TagSelect from 'ant-design-pro/lib/TagSelect';
 
-import StandardTable from 'components/StandardTable';
-import StandardFormRow from 'components/StandardFormRow';
+import ScrollTable from '../../components/ScrollTable';
+import StandardFormRow from '../../components/StandardFormRow';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 import styles from './Search.less';
@@ -92,6 +92,8 @@ const columns = [
     dataIndex: 'name',
     key: 'name',
     index: 1,
+    width: 400,
+    fixed: 'left',
   },
   {
     title: '总投资',
@@ -102,6 +104,7 @@ const columns = [
     index: 2,
     needTotal: true,
     render: val => `${val}万元`,
+    width: 150,
   },
   {
     title: '面积',
@@ -111,7 +114,8 @@ const columns = [
     align: 'center',
     index: 3,
     needTotal: true,
-    render: val => `${val}m²`,
+    render: val => `${val}㎡`,
+    width: 150,
   },
   {
     title: '公里数',
@@ -122,12 +126,15 @@ const columns = [
     index: 4,
     needTotal: true,
     render: val => `${val}km`,
+    width: 150,
   },
   {
     title: '项目代码',
     dataIndex: 'code',
     key: 'code',
+    align: 'center',
     index: 5,
+    width: 250,
   },
   {
     title: '建设性质',
@@ -136,12 +143,14 @@ const columns = [
     sorter: true,
     align: 'center',
     index: 6,
+    width: 150,
   },
   {
     title: '项目地址',
     dataIndex: 'address',
     key: 'address',
     index: 7,
+    width: 300,
   },
   {
     title: '建设地区划',
@@ -159,6 +168,7 @@ const columns = [
       });
       return rtn;
     },
+    width: 150,
   },
   {
     title: '计划开工日期',
@@ -167,6 +177,7 @@ const columns = [
     sorter: true,
     align: 'center',
     index: 9,
+    width: 200,
   },
   {
     title: '报监日期',
@@ -176,6 +187,7 @@ const columns = [
     align: 'center',
     index: 10,
     render: val => `${val}`,
+    width: 200,
   },
   {
     title: '开工年份',
@@ -185,6 +197,7 @@ const columns = [
     align: 'center',
     index: 11,
     render: val => `${val}年`,
+    width: 200,
   },
   {
     title: '建成年份',
@@ -194,27 +207,37 @@ const columns = [
     align: 'center',
     index: 12,
     render: val => `${val}年`,
+    width: 200,
   },
   {
     title: '建设单位',
     key: 'jsdw',
     index: 13,
+    width: 650,
     children: [
       {
         title: '名称',
         dataIndex: 'jsdwName',
+        align: 'center',
+        width: 300,
       },
       {
         title: '信用代码',
         dataIndex: 'jsdwCode',
+        align: 'center',
+        width: 250,
       },
       {
         title: '法人',
         dataIndex: 'jsdwFr',
+        align: 'center',
+        width: 100,
       },
       {
         title: '电话',
         dataIndex: 'jsdwTel',
+        align: 'center',
+        width: 150,
       },
     ],
   },
@@ -222,18 +245,25 @@ const columns = [
     title: '施工单位',
     key: 'sgdw',
     index: 14,
+    width: 450,
     children: [
       {
         title: '名称',
         dataIndex: 'sgdwName',
+        align: 'center',
+        width: 200,
       },
       {
         title: '法人',
         dataIndex: 'sgdwFr',
+        align: 'center',
+        width: 100,
       },
       {
         title: '电话',
         dataIndex: 'sgdwTel',
+        align: 'center',
+        width: 150,
       },
     ],
   },
@@ -241,18 +271,25 @@ const columns = [
     title: '监理单位',
     key: 'jldw',
     index: 15,
+    width: 450,
     children: [
       {
         title: '名称',
         dataIndex: 'jldwName',
+        align: 'center',
+        width: 200,
       },
       {
         title: '法人',
         dataIndex: 'jldwFr',
+        align: 'center',
+        width: 100,
       },
       {
         title: '电话',
         dataIndex: 'jldwTel',
+        align: 'center',
+        width: 150,
       },
     ],
   },
@@ -260,18 +297,25 @@ const columns = [
     title: '勘察设计',
     key: 'kcdw',
     index: 16,
+    width: 450,
     children: [
       {
         title: '名称',
         dataIndex: 'kcdwName',
+        align: 'center',
+        width: 200,
       },
       {
         title: '法人',
         dataIndex: 'kcdwFr',
+        align: 'center',
+        width: 100,
       },
       {
         title: '电话',
         dataIndex: 'kcdwTel',
+        align: 'center',
+        width: 150,
       },
     ],
   },
@@ -279,18 +323,25 @@ const columns = [
     title: '设计单位',
     key: 'sjdw',
     index: 17,
+    width: 450,
     children: [
       {
         title: '名称',
         dataIndex: 'sjdwName',
+        align: 'center',
+        width: 200,
       },
       {
         title: '法人',
         dataIndex: 'sjdwFr',
+        align: 'center',
+        width: 100,
       },
       {
         title: '电话',
         dataIndex: 'sjdwTel',
+        align: 'center',
+        width: 150,
       },
     ],
   },
@@ -298,18 +349,25 @@ const columns = [
     title: '检测单位',
     key: 'jcdw',
     index: 18,
+    width: 450,
     children: [
       {
         title: '名称',
         dataIndex: 'jcdwName',
+        align: 'center',
+        width: 200,
       },
       {
         title: '法人',
         dataIndex: 'jcdwFr',
+        align: 'center',
+        width: 100,
       },
       {
         title: '电话',
         dataIndex: 'jcdwTel',
+        align: 'center',
+        width: 150,
       },
     ],
   },
@@ -323,6 +381,7 @@ const columns = [
 export default class Search extends Component {
   state = {
     expandForm: false,
+    tableScrollX: 0,
     selectedRows: [],
     selectedColumns: [],
     formValues: {},
@@ -385,9 +444,14 @@ export default class Search extends Component {
           }
         };
 
+        const tableScrollX = selectedColumns.reduce((pre, next) => {
+          return next.width + pre;
+        }, 0);
+
         this.setState({
           formValues: values,
           selectedColumns: selectedColumns.sort(colSort('index')),
+          tableScrollX,
         });
 
       });
@@ -777,13 +841,13 @@ export default class Search extends Component {
   render() {
 
     const { eng: { data }, loading, form } = this.props;
-    const { selectedColumns, selectedRows } = this.state;
+    const { selectedColumns, selectedRows, tableScrollX } = this.state;
     const { getFieldDecorator } = form;
 
     return (
       <PageHeaderLayout title="在建工程">
         <div className={styles.tableListForm}>{this.renderQueryItemForm()}</div>
-        <Card style={{ marginTop: 24 }} bordered={false}>
+        <Card style={{ marginTop: 24 }}>
           <Form layout="inline">
             <StandardFormRow title="统计项目" block style={{ paddingBottom: 11 }}>
               <FormItem>
@@ -812,14 +876,14 @@ export default class Search extends Component {
               </FormItem>
             </StandardFormRow>
           </Form>
-        </Card>
-        <Card>
           <div className={styles.tableList}>
-            <StandardTable
+            <ScrollTable
+              selectDisable
               selectedRows={selectedRows}
               loading={loading}
               data={data}
               columns={selectedColumns}
+              scroll={{x: tableScrollX, y: 560}}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
             />
