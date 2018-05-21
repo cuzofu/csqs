@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import { DataSet } from '@antv/data-set';
 
+import { Chart, Axis, Tooltip, Geom, Legend } from 'bizcharts';
+
 import {
   Row,
   Col,
@@ -16,7 +18,6 @@ import {
 import numeral from 'numeral';
 import {
   Pie,
-  GroupBar,
 } from '../../components/Charts';
 
 import styles from './Statistics.less';
@@ -287,7 +288,7 @@ const columnsDistrict = [
       },
       {
         title: '公里数（km）',
-        dataIndex: 'ylqkEngLength',
+        dataIndex: 'ylqEngLength',
         align: 'center',
         width: 150,
       },
@@ -302,6 +303,7 @@ const columnsDistrict = [
 export default class Statistics extends Component {
   state = {
     engAmountType: 'ztb',
+    statisticsType: 'amount',
     engAmountDatePickerValue: getTimeDistance('month'),
   };
 
@@ -320,6 +322,12 @@ export default class Statistics extends Component {
   handleChangeEngType = (e) => {
     this.setState({
       engAmountType: e.target.value,
+    });
+  };
+
+  handleChangeStatisticsType = (e) => {
+    this.setState({
+      statisticsType: e.target.value,
     });
   };
 
@@ -358,16 +366,15 @@ export default class Statistics extends Component {
 
   render() {
 
-    const { engAmountType, engAmountDatePickerValue } = this.state;
+    const { engAmountType, statisticsType, engAmountDatePickerValue } = this.state;
     const { engStatistics, loading } = this.props;
-    console.log(engStatistics);
     const {
       engTypeZtbDate,
       engTypeSghtDate,
       engTypeSgxkDate,
       engDataByStage,
       engDataByDistrict,
-      engGroupBarData,
+      engDataByStageGroupBar,
     } = engStatistics;
 
     let engAmountPieData;
@@ -391,15 +398,161 @@ export default class Statistics extends Component {
         break;
     }
 
-    console.log(engGroupBarData);
-    const dv = new DataSet().createView().source(engGroupBarData);
-    dv.transform({
+    const ds = new DataSet();
+    const dvStageAmount = ds.createView().source(engDataByStageGroupBar.amount ? engDataByStageGroupBar.amount : []);
+    dvStageAmount.transform({
       type: 'fold',
       fields: ['公共建筑','市政工程','绿化工程','住宅工程','工业厂房','构筑物'], // 展开字段集
-      key: 'x', // key字段
-      value: 'y', // value字段
+      key: '工程类别', // key字段
+      value: '工程数量', // value字段
     });
-    console.log(dv);
+    const dvStageInvestment = ds.createView().source(engDataByStageGroupBar.investment ? engDataByStageGroupBar.investment : []);
+    dvStageInvestment.transform({
+      type: 'fold',
+      fields: ['公共建筑','市政工程','绿化工程','住宅工程','工业厂房','构筑物'], // 展开字段集
+      key: '工程类别', // key字段
+      value: '投资额', // value字段
+    });
+    const dvStageArea = ds.createView().source(engDataByStageGroupBar.area ? engDataByStageGroupBar.area : []);
+    dvStageArea.transform({
+      type: 'fold',
+      fields: ['公共建筑','市政工程','绿化工程','住宅工程','工业厂房','构筑物'], // 展开字段集
+      key: '工程类别', // key字段
+      value: '面积', // value字段
+    });
+    const dvStageLength = ds.createView().source(engDataByStageGroupBar.length ? engDataByStageGroupBar.length : []);
+    dvStageLength.transform({
+      type: 'fold',
+      fields: ['公共建筑','市政工程','绿化工程','住宅工程','工业厂房','构筑物'], // 展开字段集
+      key: '工程类别', // key字段
+      value: '公里数', // value字段
+    });
+
+    const originPieData = engDataByDistrict.list.filter(item => item.engType === '公共建筑');
+    let pieDataByDistrict = [];
+    let pieDataByDistrictTitle = '';
+    switch (statisticsType) {
+      case 'amount':
+        pieDataByDistrictTitle = "工程数量";
+        pieDataByDistrict = originPieData && originPieData.length > 0 ? [
+          {
+            x: '市辖区',
+            y: originPieData[0].sxqEngAmount,
+          },
+          {
+            x: '西陵区',
+            y: originPieData[0].xlqEngAmount,
+          },
+          {
+            x: '伍家岗区',
+            y: originPieData[0].wjqEngAmount,
+          },
+          {
+            x: '猇亭区',
+            y: originPieData[0].xtqEngAmount,
+          },
+          {
+            x: '点军区',
+            y: originPieData[0].djqEngAmount,
+          },
+          {
+            x: '夷陵区',
+            y: originPieData[0].ylqEngAmount,
+          },
+        ] : [];
+        break;
+      case 'investment':
+        pieDataByDistrictTitle = "投资额（万元）";
+        pieDataByDistrict = originPieData && originPieData.length > 0 ? [
+          {
+            x: '市辖区',
+            y: originPieData[0].sxqEngInvestment,
+          },
+          {
+            x: '西陵区',
+            y: originPieData[0].xlqEngInvestment,
+          },
+          {
+            x: '伍家岗区',
+            y: originPieData[0].wjqEngInvestment,
+          },
+          {
+            x: '猇亭区',
+            y: originPieData[0].xtqEngInvestment,
+          },
+          {
+            x: '点军区',
+            y: originPieData[0].djqEngInvestment,
+          },
+          {
+            x: '夷陵区',
+            y: originPieData[0].ylqEngInvestment,
+          },
+        ] : [];
+        break;
+      case 'area':
+        pieDataByDistrictTitle = "面积（㎡）";
+        pieDataByDistrict = originPieData && originPieData.length > 0 ? [
+          {
+            x: '市辖区',
+            y: originPieData[0].sxqEngArea,
+          },
+          {
+            x: '西陵区',
+            y: originPieData[0].xlqEngArea,
+          },
+          {
+            x: '伍家岗区',
+            y: originPieData[0].wjqEngArea,
+          },
+          {
+            x: '猇亭区',
+            y: originPieData[0].xtqEngArea,
+          },
+          {
+            x: '点军区',
+            y: originPieData[0].djqEngArea,
+          },
+          {
+            x: '夷陵区',
+            y: originPieData[0].ylqEngArea,
+          },
+        ] : [];
+        break;
+      case 'length':
+        pieDataByDistrictTitle = "公里数（km）";
+        pieDataByDistrict = originPieData && originPieData.length > 0 ? [
+          {
+            x: '市辖区',
+            y: originPieData[0].sxqEngLength,
+          },
+          {
+            x: '西陵区',
+            y: originPieData[0].xlqEngLength,
+          },
+          {
+            x: '伍家岗区',
+            y: originPieData[0].wjqEngLength,
+          },
+          {
+            x: '猇亭区',
+            y: originPieData[0].xtqEngLength,
+          },
+          {
+            x: '点军区',
+            y: originPieData[0].djqEngLength,
+          },
+          {
+            x: '夷陵区',
+            y: originPieData[0].ylqEngLength,
+          },
+        ] : [];
+        break;
+      default:
+        pieDataByDistrict = [];
+        pieDataByDistrictTitle = "";
+        break;
+    }
 
     return (
       <PageHeaderLayout title="工程统计">
@@ -433,6 +586,95 @@ export default class Statistics extends Component {
               data={engDataByStage}
               columns={columnsStage}
             />
+          </div>
+        </Card>
+
+        <Card loading={loading} bodyStyle={{ padding: 0 }} style={{marginTop: 16}}>
+          <div className={styles.zztCard}>
+            <Tabs
+              tabBarExtraContent={
+                <div className={styles.datePickerExtraWrap}>
+                  <div className={styles.datePickerExtra}>
+                    <a className={this.isActive('today')} onClick={() => this.selectDate('today')}>
+                      今日
+                    </a>
+                    <a className={this.isActive('week')} onClick={() => this.selectDate('week')}>
+                      本周
+                    </a>
+                    <a className={this.isActive('month')} onClick={() => this.selectDate('month')}>
+                      本月
+                    </a>
+                    <a className={this.isActive('year')} onClick={() => this.selectDate('year')}>
+                      全年
+                    </a>
+                  </div>
+                  <RangePicker value={engAmountDatePickerValue} onChange={this.handleRangePickerChange} style={{ width: 256 }} />
+                </div>
+              }
+              size="large"
+              tabBarStyle={{ marginBottom: 16 }}
+            >
+              <TabPane tab="工程数量" key="amount">
+                <Row>
+                  <Col xl={24} lg={24} md={24} sm={24} xs={24}>
+                    <div className={styles.zztBar}>
+                      <Chart height={400} data={dvStageAmount} forceFit>
+                        <Axis name="工程类别" />
+                        <Axis name="工程数量" />
+                        <Legend />
+                        <Tooltip crosshairs={{type : "y"}} />
+                        <Geom type='interval' position="工程类别*工程数量" color="name" adjust={[{type: 'dodge',marginRatio: 1/32}]} />
+                      </Chart>
+                    </div>
+                  </Col>
+                </Row>
+              </TabPane>
+              <TabPane tab="投资额" key="investment">
+                <Row>
+                  <Col xl={24} lg={24} md={24} sm={24} xs={24}>
+                    <div className={styles.zztBar}>
+                      <Chart height={400} data={dvStageInvestment} forceFit>
+                        <Axis name="工程类别" />
+                        <Axis name="投资额" />
+                        <Legend />
+                        <Tooltip crosshairs={{type : "y"}} />
+                        <Geom type='interval' position="工程类别*投资额" color="name" adjust={[{type: 'dodge',marginRatio: 1/32}]} />
+                      </Chart>
+                    </div>
+                  </Col>
+                </Row>
+              </TabPane>
+              <TabPane tab="面积" key="area">
+                <Row>
+                  <Col xl={24} lg={24} md={24} sm={24} xs={24}>
+                    <div className={styles.zztBar}>
+                      <Chart height={400} data={dvStageArea} forceFit>
+                        <Axis name="工程类别" />
+                        <Axis name="面积" />
+                        <Legend />
+                        <Tooltip crosshairs={{type : "y"}} />
+                        <Geom type='interval' position="工程类别*面积" color="name" adjust={[{type: 'dodge',marginRatio: 1/32}]} />
+                      </Chart>
+                    </div>
+                  </Col>
+                </Row>
+              </TabPane>
+              <TabPane tab="公里数" key="length">
+                <Row>
+                  <Col xl={24} lg={24} md={24} sm={24} xs={24}>
+                    <div className={styles.zztBar}>
+                      <Chart height={400} data={dvStageLength} forceFit>
+                        <Axis name="工程类别" />
+                        <Axis name="公里数" />
+                        <Legend />
+                        <Tooltip crosshairs={{type : "y"}} />
+                        <Geom type='interval' position="工程类别*公里数" color="name" adjust={[{type: 'dodge',marginRatio: 1/32}]} />
+                      </Chart>
+                    </div>
+                  </Col>
+                </Row>
+              </TabPane>
+            </Tabs>
           </div>
         </Card>
 
@@ -470,51 +712,13 @@ export default class Statistics extends Component {
           </div>
         </Card>
 
-        <Card loading={loading} bodyStyle={{ padding: 0 }} style={{marginTop: 16}}>
-          <div className={styles.zztCard}>
-            <Tabs
-              tabBarExtraContent={
-                <div className={styles.datePickerExtraWrap}>
-                  <div className={styles.datePickerExtra}>
-                    <a className={this.isActive('today')} onClick={() => this.selectDate('today')}>
-                      今日
-                    </a>
-                    <a className={this.isActive('week')} onClick={() => this.selectDate('week')}>
-                      本周
-                    </a>
-                    <a className={this.isActive('month')} onClick={() => this.selectDate('month')}>
-                      本月
-                    </a>
-                    <a className={this.isActive('year')} onClick={() => this.selectDate('year')}>
-                      全年
-                    </a>
-                  </div>
-                  <RangePicker value={engAmountDatePickerValue} onChange={this.handleRangePickerChange} style={{ width: 256 }} />
-                </div>
-              }
-              size="large"
-              tabBarStyle={{ marginBottom: 16 }}
-            >
-              <TabPane tab="阶段" key="stage">
-                <Row>
-                  <Col xl={24} lg={12} md={12} sm={24} xs={24}>
-                    <div className={styles.zztBar}>
-                      <GroupBar height={295} title="按阶段统计" data={dv} />
-                    </div>
-                  </Col>
-                </Row>
-              </TabPane>
-            </Tabs>
-          </div>
-        </Card>
-
         <Row gutter={24} style={{marginTop: '16px'}}>
           <Col xl={12} lg={24} md={24} sm={24} xs={24}>
             <Card
               loading={loading}
               className={styles.engAmountCard}
               bordered={false}
-              title="工程类型数量占比"
+              title="各类型工程数量饼图"
               bodyStyle={{ padding: 24 }}
               style={{ minHeight: 509, minWidth: 300 }}
               extra={
@@ -523,8 +727,10 @@ export default class Statistics extends Component {
                     <Dropdown
                       overlay={
                         <Menu>
-                          <Menu.Item>操作一</Menu.Item>
-                          <Menu.Item>操作二</Menu.Item>
+                          <Menu.Item>数量</Menu.Item>
+                          <Menu.Item>投资额</Menu.Item>
+                          <Menu.Item>面积</Menu.Item>
+                          <Menu.Item>公里数</Menu.Item>
                         </Menu>
                       }
                       placement="bottomRight"
@@ -559,6 +765,66 @@ export default class Statistics extends Component {
                     valueFormat={value => numeral(value).format('0,0')}
                     height={248}
                     lineWidth={4}
+                  />
+                </Col>
+              </Row>
+            </Card>
+          </Col>
+
+          <Col xl={12} lg={24} md={24} sm={24} xs={24}>
+            <Card
+              loading={loading}
+              className={styles.engAmountCard}
+              bordered={false}
+              title="各区工程数据饼图"
+              bodyStyle={{ padding: 24 }}
+              style={{ minHeight: 509, minWidth: 300 }}
+              extra={
+                <div className={styles.engAmountCardExtra}>
+                  <span className={styles.iconGroup}>
+                    <Dropdown
+                      overlay={
+                        <Menu>
+                          <Menu.Item>数量</Menu.Item>
+                          <Menu.Item>投资额</Menu.Item>
+                          <Menu.Item>面积</Menu.Item>
+                          <Menu.Item>公里数</Menu.Item>
+                        </Menu>
+                      }
+                      placement="bottomRight"
+                    >
+                      <Icon type="ellipsis" />
+                    </Dropdown>
+                  </span>
+                  <div className={styles.engTypeRadio}>
+                    <Radio.Group value={statisticsType} onChange={this.handleChangeStatisticsType}>
+                      <Radio.Button value="amount">工程数量</Radio.Button>
+                      <Radio.Button value="investment">投资额</Radio.Button>
+                      <Radio.Button value="area">面积</Radio.Button>
+                      <Radio.Button value="length">长度</Radio.Button>
+                    </Radio.Group>
+                  </div>
+                </div>
+              }
+            >
+              <Row gutter={24}>
+                <Col xl={24} lg={24} md={24} sm={24} xs={24}>
+                  <h4 style={{ marginTop: 8, marginBottom: 32 }}>按区划统计</h4>
+                  <Pie
+                    hasLegend
+                    subTitle={pieDataByDistrictTitle}
+                    total={
+                      numeral(
+                        pieDataByDistrict.reduce((pre, now) => {
+                          return now.y + pre;
+                        }, 0)
+                      ).format('0,0')
+                    }
+                    data={pieDataByDistrict}
+                    valueFormat={value => numeral(value).format('0,0')}
+                    height={248}
+                    lineWidth={4}
+                    tooltip
                   />
                 </Col>
               </Row>

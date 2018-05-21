@@ -88,15 +88,6 @@ class GroupBar extends Component {
       }),
     ];
 
-    const ds = new DataSet();
-    const dv = ds.createView().source(data);
-    dv.transform({
-      type,
-      fields, // 展开字段集
-      key, // key字段
-      value, // value字段
-    });
-
     return (
       <div className={styles.chart} style={{ height }} ref={this.handleRoot}>
         <div ref={this.handleRef}>

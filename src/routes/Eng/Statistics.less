@@ -2,10 +2,15 @@
 @import '../../utils/utils.less';
 
 .tableList {
-  .tableListOperator {
-    margin-bottom: 16px;
-    button {
-      margin-right: 8px;
+  :global {
+    .ant-table-thead > tr > th:nth-child(odd)[colspan] {
+      background: Honeydew;
+    }
+    .ant-table-thead > tr > th:nth-child(even)[colspan] {
+      background: AliceBlue;
+    }
+    .ant-table-thead > tr > th {
+      font-weight: 800;
     }
   }
 }

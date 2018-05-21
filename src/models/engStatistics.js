@@ -7,7 +7,7 @@ export default {
     engTypeZtbDate: [],
     engTypeSghtDate: [],
     engTypeSgxkDate: [],
-    engGroupBarData: [],
+    engDataByStageGroupBar: [],
     engDataByStage: {
       list: [],
       pagination: {},
@@ -44,7 +44,7 @@ export default {
         engTypeZtbDate: [],
         engTypeSghtDate: [],
         engTypeSgxkDate: [],
-        engGroupBarData: [],
+        engDataByStageGroupBar: [],
         engDataByStage: {
           list: [],
           pagination: {},
