@@ -7,6 +7,7 @@ import { getProfileAdvancedData } from './mock/profile';
 import { getNotices } from './mock/notices';
 import { getOrgCredit, fakeStatisticsData } from './mock/credit';
 import { getEngList, getEngAmountData } from './mock/eng';
+import { getOrgStatisticsData } from './mock/org';
 import { format, delay } from 'roadhog-api-doc';
 
 // 是否禁用代理
@@ -58,6 +59,7 @@ const proxy = {
   'GET /api/credit/org/statistics': fakeStatisticsData,
   'GET /api/eng/search': getEngList,
   'GET /api/eng/statistics': getEngAmountData,
+  'GET /api/org/statistics': getOrgStatisticsData,
   'GET /api/rule': getRule,
   'POST /api/rule': {
     $params: {
