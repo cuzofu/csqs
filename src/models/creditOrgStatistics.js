@@ -8,6 +8,7 @@ export default {
     goodBehaviorDataLastYear: [],
     badBehaviorGroupByDistrict: [],
     goodBehaviorGroupByDistrict: [],
+    orgCreditDataLast12Month: [],
     loading: false,
   },
 
@@ -44,6 +45,7 @@ export default {
         goodBehaviorDataLastYear: [],
         badBehaviorGroupByDistrict: [],
         goodBehaviorGroupByDistrict: [],
+        orgCreditDataLast12Month: [],
       };
     },
   },

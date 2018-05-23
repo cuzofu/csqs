@@ -187,11 +187,77 @@ export function fakeStatisticsData(req, res, u) {
     }
   }
 
+
+// 每月新增企业诚信行为曲线图
+  const orgCreditDataLast12Month = [
+    {
+      month: '一月',
+      '良好行为': 7,
+      '不良行为': 3,
+    },
+    {
+      month: '二月',
+      '良好行为': 12,
+      '不良行为': 6,
+    },
+    {
+      month: '三月',
+      '良好行为': 2,
+      '不良行为': 2,
+    },
+    {
+      month: '四月',
+      '良好行为': 6,
+      '不良行为': 2,
+    },
+    {
+      month: '五月',
+      '良好行为': 3,
+      '不良行为': 2,
+    },
+    {
+      month: '六月',
+      '良好行为': 18,
+      '不良行为': 16,
+    },
+    {
+      month: '七月',
+      '良好行为': 10,
+      '不良行为': 4,
+    },
+    {
+      month: '八月',
+      '良好行为': 10,
+      '不良行为': 4,
+    },
+    {
+      month: '九月',
+      '良好行为': 7,
+      '不良行为': 4,
+    },
+    {
+      month: '十月',
+      '良好行为': 11,
+      '不良行为': 23,
+    },
+    {
+      month: '十一月',
+      '良好行为': 7,
+      '不良行为': 3,
+    },
+    {
+      month: '十二月',
+      '良好行为': 1,
+      '不良行为': 6,
+    },
+  ];
+
   const result = {
     badBehaviorDataLastYear,
     goodBehaviorDataLastYear,
     badBehaviorGroupByDistrict,
     goodBehaviorGroupByDistrict,
+    orgCreditDataLast12Month,
   };
 
   if (res && res.json) {

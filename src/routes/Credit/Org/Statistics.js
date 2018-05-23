@@ -1,10 +1,14 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'dva';
+import { DataSet } from '@antv/data-set';
+
+import { Chart, Axis, Tooltip, Geom, Legend } from 'bizcharts';
+
 import {
   Row,
   Col,
   Icon,
-  Tooltip,
+  Tooltip as AntTooltip,
   Card,
   Tabs,
   DatePicker,
@@ -174,6 +178,7 @@ export default class Statistics extends Component {
       goodBehaviorDataLastYear,
       badBehaviorGroupByDistrict,
       goodBehaviorGroupByDistrict,
+      orgCreditDataLast12Month,
     } = creditOrgStatistics;
     let totalBadBehaviorLastYear = 0;
     let totalGoodBehaviorLastYear = 0;
@@ -183,6 +188,25 @@ export default class Statistics extends Component {
     goodBehaviorDataLastYear.forEach( val => {
       totalGoodBehaviorLastYear += val.y
     });
+
+    const ds = new DataSet();
+    const dvOrgCreditDataLast12Month = ds.createView().source(orgCreditDataLast12Month);
+    dvOrgCreditDataLast12Month.transform({
+      type: 'fold',
+      fields: ['良好行为', '不良行为'], // 展开字段集
+      key: '诚信行为', // key字段
+      value: '次数', // value字段
+    });
+
+
+    const singleColResponsiveProps = {
+      xs: 24,
+      sm: 24,
+      md: 24,
+      lg: 24,
+      xl: 24,
+      style: { marginTop: 16 },
+    };
 
     return (
       <PageHeaderLayout title="诚信统计">
@@ -194,9 +218,9 @@ export default class Statistics extends Component {
                 bordered={false}
                 title="纳入诚信企业数量"
                 action={
-                  <Tooltip title="指标说明：纳入诚信企业数量总数">
+                  <AntTooltip title="指标说明：纳入诚信企业数量总数">
                     <Icon type="info-circle-o" />
-                  </Tooltip>
+                  </AntTooltip>
                 }
                 total={numeral(560).format('0,0')}
                 footer={<Field label="日增数量" value={`${numeral(12).format('0,0')}`} />}
@@ -217,9 +241,9 @@ export default class Statistics extends Component {
                 bordered={false}
                 title="不良行为次数"
                 action={
-                  <Tooltip title="指标说明：最近一年每月产生的不良行为次数">
+                  <AntTooltip title="指标说明：最近一年每月产生的不良行为次数">
                     <Icon type="info-circle-o" />
-                  </Tooltip>
+                  </AntTooltip>
                 }
                 total={numeral(totalBadBehaviorLastYear).format('0,0')}
                 footer={<Field label="本月产生次数" value={numeral(12).format('0,0')} />}
@@ -249,9 +273,9 @@ export default class Statistics extends Component {
                 bordered={false}
                 title="良好行为次数"
                 action={
-                  <Tooltip title="指标说明：最近一年每月产生的良好行为次数">
+                  <AntTooltip title="指标说明：最近一年每月产生的良好行为次数">
                     <Icon type="info-circle-o" />
-                  </Tooltip>
+                  </AntTooltip>
                 }
                 total={numeral(totalGoodBehaviorLastYear).format('0,0')}
                 footer={<Field label="本月产生次数" value={numeral(21).format('0,0')} />}
@@ -324,6 +348,27 @@ export default class Statistics extends Component {
             </Tabs>
           </div>
         </Card>
+
+        <Row gutter={24}>
+          <Col {...singleColResponsiveProps}>
+            <Card
+              loading={loading}
+              title="最近12个月每月新增诚信行为记录数量曲线图"
+            >
+              <div>
+                <Chart height={400} data={dvOrgCreditDataLast12Month} forceFit>
+                  <Axis name="month" />
+                  <Axis name="次数" label={{formatter: val => `${val}次`}} />
+                  <Legend />
+                  <Tooltip crosshairs={{type : "y"}} />
+                  <Geom type="line" position="month*次数" size={2} color="诚信行为" shape="smooth" />
+                  <Geom type='point' position="month*次数" size={4} color="诚信行为" shape="circle" style={{ stroke: '#fff', lineWidth: 1}} />
+                </Chart>
+              </div>
+            </Card>
+          </Col>
+        </Row>
+
       </PageHeaderLayout>
     );
   }
