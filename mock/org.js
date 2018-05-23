@@ -1589,6 +1589,82 @@ const eqLevelTableData = [
   },
 ];
 
+// 每月新增企业数量曲线图
+const orgIncreaseDataLast12Month = [
+  {
+    month: '一月',
+    '全部': 7,
+    '本地': 3,
+    '外地': 4,
+  },
+  {
+    month: '二月',
+    '全部': 12,
+    '本地': 6,
+    '外地': 6,
+  },
+  {
+    month: '三月',
+    '全部': 2,
+    '本地': 2,
+    '外地': 0,
+  },
+  {
+    month: '四月',
+    '全部': 6,
+    '本地': 2,
+    '外地': 4,
+  },
+  {
+    month: '五月',
+    '全部': 3,
+    '本地': 2,
+    '外地': 1,
+  },
+  {
+    month: '六月',
+    '全部': 18,
+    '本地': 2,
+    '外地': 16,
+  },
+  {
+    month: '七月',
+    '全部': 10,
+    '本地': 4,
+    '外地': 6,
+  },
+  {
+    month: '八月',
+    '全部': 10,
+    '本地': 4,
+    '外地': 6,
+  },
+  {
+    month: '九月',
+    '全部': 7,
+    '本地': 3,
+    '外地': 4,
+  },
+  {
+    month: '十月',
+    '全部': 11,
+    '本地': 2,
+    '外地': 9,
+  },
+  {
+    month: '十一月',
+    '全部': 7,
+    '本地': 3,
+    '外地': 4,
+  },
+  {
+    month: '十二月',
+    '全部': 1,
+    '本地': 0,
+    '外地': 1,
+  },
+];
+
 const eqLevelTableList = {
   list: eqLevelTableData,
   pagination: false,
@@ -1601,6 +1677,7 @@ export const getOrgStatisticsData = {
   orgAmountForeign,
   eqLevelTreeData,
   eqLevelTableList,
+  orgIncreaseDataLast12Month,
 };
 
 export default {

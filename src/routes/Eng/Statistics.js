@@ -375,6 +375,7 @@ export default class Statistics extends Component {
       engDataByStage,
       engDataByDistrict,
       engDataByStageGroupBar,
+      engIncreaseDataLast12Month,
     } = engStatistics;
 
     let engAmountPieData;
@@ -426,6 +427,14 @@ export default class Statistics extends Component {
       fields: ['公共建筑','市政工程','绿化工程','住宅工程','工业厂房','构筑物'], // 展开字段集
       key: '工程类别', // key字段
       value: '公里数', // value字段
+    });
+
+    const dvEngIncreaseDataLast12Month = ds.createView().source(engIncreaseDataLast12Month);
+    dvEngIncreaseDataLast12Month.transform({
+      type: 'fold',
+      fields: ['全部', '公共建筑', '市政工程', '绿化工程', '住宅工程', '工业厂房', '构筑物'], // 展开字段集
+      key: '工程类型', // key字段
+      value: '工程数量', // value字段
     });
 
     const originPieData = engDataByDistrict.list.filter(item => item.engType === '公共建筑');
@@ -553,6 +562,15 @@ export default class Statistics extends Component {
         pieDataByDistrictTitle = "";
         break;
     }
+
+    const singleColResponsiveProps = {
+      xs: 24,
+      sm: 24,
+      md: 24,
+      lg: 24,
+      xl: 24,
+      style: { marginTop: 16 },
+    };
 
     return (
       <PageHeaderLayout title="工程统计">
@@ -831,6 +849,27 @@ export default class Statistics extends Component {
             </Card>
           </Col>
         </Row>
+
+        <Row gutter={24}>
+          <Col {...singleColResponsiveProps}>
+            <Card
+              loading={loading}
+              title="最近12个月每月新增企业数量曲线图"
+            >
+              <div>
+                <Chart height={400} data={dvEngIncreaseDataLast12Month} forceFit>
+                  <Axis name="month" />
+                  <Axis name="工程数量" label={{formatter: val => `${val}个`}} />
+                  <Legend />
+                  <Tooltip crosshairs={{type : "y"}} />
+                  <Geom type="line" position="month*工程数量" size={2} color="工程类型" shape="smooth" />
+                  <Geom type='point' position="month*工程数量" size={4} color="工程类型" shape="circle" style={{ stroke: '#fff', lineWidth: 1}} />
+                </Chart>
+              </div>
+            </Card>
+          </Col>
+        </Row>
+
       </PageHeaderLayout>
     );
   }

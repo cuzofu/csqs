@@ -9,9 +9,10 @@ export default {
     orgAmountLocal: [],
     orgAmountForeign: [],
     eqLevelTreeData: [],
+    orgIncreaseDataLast12Month: [],
     eqLevelTableList: {
       list: [],
-      pagination: {},
+      pagination: false,
       loading: false,
     },
   },
@@ -40,9 +41,10 @@ export default {
         orgAmountLocal: [],
         orgAmountForeign: [],
         eqLevelTreeData: [],
+        orgIncreaseDataLast12Month: [],
         eqLevelTableList: {
           list: [],
-          pagination: {},
+          pagination: false,
           loading: false,
         },
       };

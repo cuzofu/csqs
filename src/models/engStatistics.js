@@ -8,14 +8,15 @@ export default {
     engTypeSghtDate: [],
     engTypeSgxkDate: [],
     engDataByStageGroupBar: [],
+    engIncreaseDataLast12Month: [],
     engDataByStage: {
       list: [],
-      pagination: {},
+      pagination: false,
       loading: false,
     },
     engDataByDistrict: {
       list: [],
-      pagination: {},
+      pagination: false,
       loading: false,
     },
   },
@@ -44,15 +45,16 @@ export default {
         engTypeZtbDate: [],
         engTypeSghtDate: [],
         engTypeSgxkDate: [],
+        engIncreaseDataLast12Month: [],
         engDataByStageGroupBar: [],
         engDataByStage: {
           list: [],
-          pagination: {},
+          pagination: false,
           loading: false,
         },
         engDataByDistrict: {
           list: [],
-          pagination: {},
+          pagination: false,
           loading: false,
         },
       };

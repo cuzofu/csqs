@@ -63,7 +63,15 @@ export default class Statistics extends Component {
   };
 
   render() {
-    const { orgStatistics: { eqTypeData, orgAmountAll, orgAmountLocal, orgAmountForeign, eqLevelTableList }, loading } = this.props;
+    const {
+      orgStatistics: {
+        eqTypeData,
+        orgAmountAll,
+        orgAmountLocal,
+        orgAmountForeign,
+        eqLevelTableList,
+        orgIncreaseDataLast12Month,
+      }, loading } = this.props;
     const { orgSite } = this.state;
 
     const ds = new DataSet();
@@ -71,6 +79,14 @@ export default class Statistics extends Component {
     dvEqTypeData.transform({
       type: 'fold',
       fields: ['施工','招标代理','造价咨询','监理类','检测机构类','商品砼类', '劳务分包类', '勘察类', '设计类', '房地产开发类', '园林绿化类', '施工图审查类', '燃气特许经营类', '自来水特许经营类', '节能墙材类'], // 展开字段集
+      key: '所在地', // key字段
+      value: '企业数量', // value字段
+    });
+
+    const dvOrgIncreaseDataLast12Month = ds.createView().source(orgIncreaseDataLast12Month);
+    dvOrgIncreaseDataLast12Month.transform({
+      type: 'fold',
+      fields: ['全部', '本地', '外地'], // 展开字段集
       key: '所在地', // key字段
       value: '企业数量', // value字段
     });
@@ -262,6 +278,27 @@ export default class Statistics extends Component {
             </Card>
           </Col>
         </Row>
+
+        <Row gutter={24}>
+          <Col {...singleColResponsiveProps}>
+            <Card
+              loading={loading}
+              title="最近12个月每月新增企业数量曲线图"
+            >
+              <div>
+                <Chart height={400} data={dvOrgIncreaseDataLast12Month} forceFit>
+                  <Axis name="month" />
+                  <Axis name="企业数量" label={{formatter: val => `${val}家`}} />
+                  <Legend />
+                  <Tooltip crosshairs={{type : "y"}} />
+                  <Geom type="line" position="month*企业数量" size={2} color="所在地" shape="smooth" />
+                  <Geom type='point' position="month*企业数量" size={4} color="所在地" shape="circle" style={{ stroke: '#fff', lineWidth: 1}} />
+                </Chart>
+              </div>
+            </Card>
+          </Col>
+        </Row>
+
       </PageHeaderLayout>
     );
   }
