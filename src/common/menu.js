@@ -27,6 +27,10 @@ const menuData = [
         name: '在建工程',
         path: 'search',
       },
+      {
+        name: '工程进度',
+        path: 'progression',
+      },
     ],
   },
   {

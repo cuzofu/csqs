@@ -88,14 +88,6 @@ const districtCodeList = [
 
 const columns = [
   {
-    title: '项目名称',
-    dataIndex: 'name',
-    key: 'name',
-    index: 1,
-    width: 400,
-    fixed: 'left',
-  },
-  {
     title: '总投资',
     dataIndex: 'investment',
     key: 'investment',
@@ -373,6 +365,18 @@ const columns = [
   },
 ];
 
+const colSort = (key) => {
+  return (o1, o2) => {
+    if (o1[key] < o2[key]) {
+      return -1;
+    } else if (o1[key] > o2[key]) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+};
+
 @connect(({ eng, loading }) => ({
   eng,
   loading: loading.effects['eng/fetch'],
@@ -391,7 +395,6 @@ export default class Search extends Component {
     const {form, dispatch} = this.props;
     form.setFieldsValue({
       category: [
-        'name',
         'investment',
         'area',
         'length',
@@ -413,7 +416,6 @@ export default class Search extends Component {
 
   handleColumnsFormSubmit = () => {
     const { form } = this.props;
-    // setTimeout 用于保证获取表单值是在所有表单字段更新完毕的时候
     setTimeout(() => {
       form.validateFields((err, fieldsValue) => {
         if (err) return;
@@ -432,25 +434,21 @@ export default class Search extends Component {
           })
         });
 
-        const colSort = (key) => {
-          return (o1, o2) => {
-            if (o1[key] < o2[key]) {
-              return -1;
-            } else if (o1[key] > o2[key]) {
-              return 1;
-            } else {
-              return 0;
-            }
-          }
-        };
+        const nameColumn = [
+          {
+            title: '项目名称',
+            dataIndex: 'name',
+            key: 'name',
+            index: 1,
+            width: 400,
+          },
+        ];
 
-        const tableScrollX = selectedColumns.reduce((pre, next) => {
-          return next.width + pre;
-        }, 0);
+        const tableScrollX = nameColumn.concat(selectedColumns).reduce((pre, next) => { return next.width + pre;}, 0);
 
         this.setState({
           formValues: values,
-          selectedColumns: selectedColumns.sort(colSort('index')),
+          selectedColumns: nameColumn.concat(selectedColumns).sort(colSort('index')),
           tableScrollX,
         });
 
@@ -602,7 +600,6 @@ export default class Search extends Component {
         formValues: values,
       });
 
-      console.log(values);
       dispatch({
         type: 'eng/fetch',
         payload: values,
@@ -852,8 +849,7 @@ export default class Search extends Component {
             <StandardFormRow title="统计项目" block style={{ paddingBottom: 11 }}>
               <FormItem>
                 {getFieldDecorator('category')(
-                  <TagSelect onChange={this.handleColumnsFormSubmit} expandable>
-                    <TagSelect.Option value="name">项目名称</TagSelect.Option>
+                  <TagSelect onChange={this.handleColumnsFormSubmit}>
                     <TagSelect.Option value="investment">总投资</TagSelect.Option>
                     <TagSelect.Option value="area">面积</TagSelect.Option>
                     <TagSelect.Option value="length">公里数</TagSelect.Option>

@@ -546,236 +546,18 @@ for (let i = 0; i < 50; i += 1) {
   });
 }
 
-export function getEngList(req, res, u) {
-  let url = u;
-  if (!url || Object.prototype.toString.call(url) !== '[object String]') {
-    url = req.url; // eslint-disable-line
-  }
+const engProgressionListDataSource = [];
+for (let i = 0; i < 50; i += 1) {
 
-  let dataSource = [...engListDataSource];
-
-  const params = parse(url, true).query;
-
-  if (params.sorter) {
-    const s = params.sorter.split('_');
-    dataSource = dataSource.sort((prev, next) => {
-      if (s[1] === 'descend') {
-        return next[s[0]] - prev[s[0]];
-      }
-      return prev[s[0]] - next[s[0]];
-    });
-  }
-
-  if (params.name) {
-    dataSource = dataSource.filter(data =>
-      data.name.indexOf(params.name) > -1
-    );
-  }
-
-  if (params.address) {
-    dataSource = dataSource.filter(data =>
-      data.address.indexOf(params.address) > -1
-    );
-  }
-
-  if (params.jsdwName) {
-    dataSource = dataSource.filter(data =>
-      data.jsdwName.indexOf(params.jsdwName) > -1
-    );
-  }
-
-  if (params.sgdwName) {
-    dataSource = dataSource.filter(data =>
-      data.sgdwName.indexOf(params.sgdwName) > -1
-    );
-  }
-
-  if (params.jldwName) {
-    dataSource = dataSource.filter(data =>
-      data.jldwName.indexOf(params.jldwName) > -1
-    );
-  }
-
-  if (params.kcdwName) {
-    dataSource = dataSource.filter(data =>
-      data.kcdwName.indexOf(params.kcdwName) > -1
-    );
-  }
-
-  if (params.sjdwName) {
-    dataSource = dataSource.filter(data =>
-      data.sjdwName.indexOf(params.sjdwName) > -1
-    );
-  }
-
-  if (params.jcdwName) {
-    dataSource = dataSource.filter(data =>
-      data.jcdwName.indexOf(params.jcdwName) > -1
-    );
-  }
-
-  // 总投资
-  if (params.investmentStart && params.investmentEnd) {
-    const investmentStart = params.investmentStart / 1;
-    const investmentEnd = params.investmentEnd / 1;
-    if (investmentStart >= investmentEnd) {
-      dataSource = dataSource.filter(data =>
-        data.investment <= investmentStart && data.investment >= investmentEnd
-      );
-    } else {
-      dataSource = dataSource.filter(data => {
-        return data.investment >= investmentStart && data.investment <= investmentEnd
-      });
-    }
-  } else if (params.investmentStart) {
-    dataSource = dataSource.filter(data =>
-      data.investment >= (params.investmentStart / 1)
-    );
-  } else if (params.investmentEnd) {
-    dataSource = dataSource.filter(data =>
-      data.investment <= (params.investmentEnd / 1)
-    );
-  }
-
-  // 面积
-  if (params.areaStart && params.areaEnd) {
-    const areaStart = params.areaStart / 1;
-    const areaEnd = params.areaEnd / 1;
-    if (areaStart >= areaEnd) {
-      dataSource = dataSource.filter(data =>
-        data.area <= areaStart && data.area >= areaEnd
-      );
-    } else {
-      dataSource = dataSource.filter(data => {
-        return data.area >= areaStart && data.area <= areaEnd
-      });
-    }
-  } else if (params.areaStart) {
-    dataSource = dataSource.filter(data =>
-      data.area >= (params.areaStart / 1)
-    );
-  } else if (params.areaEnd) {
-    dataSource = dataSource.filter(data =>
-      data.area <= (params.areaEnd / 1)
-    );
-  }
-
-  // 公里数
-  if (params.lengthStart && params.lengthEnd) {
-    const lengthStart = params.lengthStart / 1;
-    const lengthEnd = params.lengthEnd / 1;
-    if (lengthStart >= lengthEnd) {
-      dataSource = dataSource.filter(data =>
-        data.length <= lengthStart && data.length >= lengthEnd
-      );
-    } else {
-      dataSource = dataSource.filter(data => {
-        return data.length >= lengthStart && data.length <= lengthEnd
-      });
-    }
-  } else if (params.lengthStart) {
-    dataSource = dataSource.filter(data =>
-      data.length >= (params.lengthStart / 1)
-    );
-  } else if (params.lengthEnd) {
-    dataSource = dataSource.filter(data =>
-      data.length <= (params.lengthEnd / 1)
-    );
-  }
-
-  if (params.jsxz) {
-    const jsxzList = params.jsxz.split(',');
-    let filterDataSource = [];
-    jsxzList.forEach(val => {
-      filterDataSource = filterDataSource.concat(
-        [...dataSource].filter(data => data.jsxz === val)
-      );
-    });
-    dataSource = filterDataSource;
-  }
-
-  // 项目代码
-  if (params.code) {
-    dataSource = dataSource.filter(data =>
-      data.code.indexOf(params.code) > -1
-    );
-  }
-
-  // 地区区划
-  if (params.cantonCode) {
-    const cantonCodeList = params.cantonCode.split(',');
-    let filterDataSource = [];
-    cantonCodeList.forEach(val => {
-      filterDataSource = filterDataSource.concat(
-        [...dataSource].filter(data => data.cantonCode === val)
-      );
-    });
-    dataSource = filterDataSource;
-  }
-
-  // 开工年份
-  if (params.kgnf) {
-    dataSource = dataSource.filter(data =>
-      data.kgnf === params.kgnf
-    );
-  }
-
-  // 建成年份
-  if (params.jcnf) {
-    dataSource = dataSource.filter(data =>
-      data.jcnf === params.jcnf
-    );
-  }
-
-  // 开工日期
-  if (params.startDate) {
-    const startDateList = params.startDate.split(',');
-    const min = startDateList[0];
-    const max = startDateList[1];
-    dataSource = dataSource.filter(data => {
-      const kgrq = Moment(data.startDate).unix();
-      if (min <= max) {
-        return kgrq >= min && kgrq <= max
-      } else {
-        return kgrq <= min && kgrq >= max
-      }
-    });
-  }
-
-  // 报监日期
-  if (params.bjrq) {
-    const bjrqList = params.bjrq.split(',');
-    const min = bjrqList[0];
-    const max = bjrqList[1];
-    dataSource = dataSource.filter(data => {
-      const bjrq = Moment(data.bjrq).unix();
-      if (min <= max) {
-        return bjrq >= min && bjrq <= max
-      } else {
-        return bjrq <= min && bjrq >= max
-      }
-    });
-  }
-
-  let pageSize = 10;
-  if (params.pageSize) {
-    pageSize = params.pageSize * 1;
-  }
-
-  const result = {
-    list: dataSource,
-    pagination: {
-      total: dataSource.length,
-      pageSize,
-      current: parseInt(params.currentPage, 10) || 1,
-    },
-  };
-
-  if (res && res.json) {
-    res.json(result);
-  } else {
-    return result;
-  }
+  engProgressionListDataSource.push(
+    Mock.mock({
+      'key': i,
+      'name': `在建工程${i+1}`,
+      'progression': `形象进度${i+1}`,
+      'completionRate|0-100.0-2': 1,
+      'completionInvestment': Math.floor(Math.random() * 10000) + 500,
+    })
+  );
 }
 
 // 招投标项目
@@ -1309,7 +1091,339 @@ export const getEngAmountData = {
   engIncreaseDataLast12Month,
 };
 
+export function getEngList(req, res, u) {
+  let url = u;
+  if (!url || Object.prototype.toString.call(url) !== '[object String]') {
+    url = req.url; // eslint-disable-line
+  }
+
+  let dataSource = [...engListDataSource];
+
+  const params = parse(url, true).query;
+
+  if (params.sorter) {
+    const s = params.sorter.split('_');
+    dataSource = dataSource.sort((prev, next) => {
+      if (s[1] === 'descend') {
+        return next[s[0]] - prev[s[0]];
+      }
+      return prev[s[0]] - next[s[0]];
+    });
+  }
+
+  if (params.name) {
+    dataSource = dataSource.filter(data =>
+      data.name.indexOf(params.name) > -1
+    );
+  }
+
+  if (params.address) {
+    dataSource = dataSource.filter(data =>
+      data.address.indexOf(params.address) > -1
+    );
+  }
+
+  if (params.jsdwName) {
+    dataSource = dataSource.filter(data =>
+      data.jsdwName.indexOf(params.jsdwName) > -1
+    );
+  }
+
+  if (params.sgdwName) {
+    dataSource = dataSource.filter(data =>
+      data.sgdwName.indexOf(params.sgdwName) > -1
+    );
+  }
+
+  if (params.jldwName) {
+    dataSource = dataSource.filter(data =>
+      data.jldwName.indexOf(params.jldwName) > -1
+    );
+  }
+
+  if (params.kcdwName) {
+    dataSource = dataSource.filter(data =>
+      data.kcdwName.indexOf(params.kcdwName) > -1
+    );
+  }
+
+  if (params.sjdwName) {
+    dataSource = dataSource.filter(data =>
+      data.sjdwName.indexOf(params.sjdwName) > -1
+    );
+  }
+
+  if (params.jcdwName) {
+    dataSource = dataSource.filter(data =>
+      data.jcdwName.indexOf(params.jcdwName) > -1
+    );
+  }
+
+  // 总投资
+  if (params.investmentStart && params.investmentEnd) {
+    const investmentStart = params.investmentStart / 1;
+    const investmentEnd = params.investmentEnd / 1;
+    if (investmentStart >= investmentEnd) {
+      dataSource = dataSource.filter(data =>
+        data.investment <= investmentStart && data.investment >= investmentEnd
+      );
+    } else {
+      dataSource = dataSource.filter(data => {
+        return data.investment >= investmentStart && data.investment <= investmentEnd
+      });
+    }
+  } else if (params.investmentStart) {
+    dataSource = dataSource.filter(data =>
+      data.investment >= (params.investmentStart / 1)
+    );
+  } else if (params.investmentEnd) {
+    dataSource = dataSource.filter(data =>
+      data.investment <= (params.investmentEnd / 1)
+    );
+  }
+
+  // 面积
+  if (params.areaStart && params.areaEnd) {
+    const areaStart = params.areaStart / 1;
+    const areaEnd = params.areaEnd / 1;
+    if (areaStart >= areaEnd) {
+      dataSource = dataSource.filter(data =>
+        data.area <= areaStart && data.area >= areaEnd
+      );
+    } else {
+      dataSource = dataSource.filter(data => {
+        return data.area >= areaStart && data.area <= areaEnd
+      });
+    }
+  } else if (params.areaStart) {
+    dataSource = dataSource.filter(data =>
+      data.area >= (params.areaStart / 1)
+    );
+  } else if (params.areaEnd) {
+    dataSource = dataSource.filter(data =>
+      data.area <= (params.areaEnd / 1)
+    );
+  }
+
+  // 公里数
+  if (params.lengthStart && params.lengthEnd) {
+    const lengthStart = params.lengthStart / 1;
+    const lengthEnd = params.lengthEnd / 1;
+    if (lengthStart >= lengthEnd) {
+      dataSource = dataSource.filter(data =>
+        data.length <= lengthStart && data.length >= lengthEnd
+      );
+    } else {
+      dataSource = dataSource.filter(data => {
+        return data.length >= lengthStart && data.length <= lengthEnd
+      });
+    }
+  } else if (params.lengthStart) {
+    dataSource = dataSource.filter(data =>
+      data.length >= (params.lengthStart / 1)
+    );
+  } else if (params.lengthEnd) {
+    dataSource = dataSource.filter(data =>
+      data.length <= (params.lengthEnd / 1)
+    );
+  }
+
+  if (params.jsxz) {
+    const jsxzList = params.jsxz.split(',');
+    let filterDataSource = [];
+    jsxzList.forEach(val => {
+      filterDataSource = filterDataSource.concat(
+        [...dataSource].filter(data => data.jsxz === val)
+      );
+    });
+    dataSource = filterDataSource;
+  }
+
+  // 项目代码
+  if (params.code) {
+    dataSource = dataSource.filter(data =>
+      data.code.indexOf(params.code) > -1
+    );
+  }
+
+  // 地区区划
+  if (params.cantonCode) {
+    const cantonCodeList = params.cantonCode.split(',');
+    let filterDataSource = [];
+    cantonCodeList.forEach(val => {
+      filterDataSource = filterDataSource.concat(
+        [...dataSource].filter(data => data.cantonCode === val)
+      );
+    });
+    dataSource = filterDataSource;
+  }
+
+  // 开工年份
+  if (params.kgnf) {
+    dataSource = dataSource.filter(data =>
+      data.kgnf === params.kgnf
+    );
+  }
+
+  // 建成年份
+  if (params.jcnf) {
+    dataSource = dataSource.filter(data =>
+      data.jcnf === params.jcnf
+    );
+  }
+
+  // 开工日期
+  if (params.startDate) {
+    const startDateList = params.startDate.split(',');
+    const min = startDateList[0];
+    const max = startDateList[1];
+    dataSource = dataSource.filter(data => {
+      const kgrq = Moment(data.startDate).unix();
+      if (min <= max) {
+        return kgrq >= min && kgrq <= max
+      } else {
+        return kgrq <= min && kgrq >= max
+      }
+    });
+  }
+
+  // 报监日期
+  if (params.bjrq) {
+    const bjrqList = params.bjrq.split(',');
+    const min = bjrqList[0];
+    const max = bjrqList[1];
+    dataSource = dataSource.filter(data => {
+      const bjrq = Moment(data.bjrq).unix();
+      if (min <= max) {
+        return bjrq >= min && bjrq <= max
+      } else {
+        return bjrq <= min && bjrq >= max
+      }
+    });
+  }
+
+  let pageSize = 10;
+  if (params.pageSize) {
+    pageSize = params.pageSize * 1;
+  }
+
+  const result = {
+    list: dataSource,
+    pagination: {
+      total: dataSource.length,
+      pageSize,
+      current: parseInt(params.currentPage, 10) || 1,
+    },
+  };
+
+  if (res && res.json) {
+    res.json(result);
+  } else {
+    return result;
+  }
+}
+
+export function getEngProgressionList(req, res, u) {
+  let url = u;
+  if (!url || Object.prototype.toString.call(url) !== '[object String]') {
+    url = req.url; // eslint-disable-line
+  }
+
+  let dataSource = [...engProgressionListDataSource];
+
+  const params = parse(url, true).query;
+
+  if (params.sorter) {
+    const s = params.sorter.split('_');
+    dataSource = dataSource.sort((prev, next) => {
+      if (s[1] === 'descend') {
+        return next[s[0]] - prev[s[0]];
+      }
+      return prev[s[0]] - next[s[0]];
+    });
+  }
+
+  if (params.name) {
+    dataSource = dataSource.filter(data =>
+      data.name.indexOf(params.name) > -1
+    );
+  }
+
+  if (params.progression) {
+    dataSource = dataSource.filter(data =>
+      data.progression.indexOf(params.progression) > -1
+    );
+  }
+
+  // 完成投资
+  if (params.completionInvestmentStart && params.completionInvestmentEnd) {
+    const investmentStart = params.completionInvestmentStart / 1;
+    const investmentEnd = params.completionInvestmentEnd / 1;
+    if (investmentStart >= investmentEnd) {
+      dataSource = dataSource.filter(data =>
+        data.completionInvestment <= investmentStart && data.completionInvestment >= investmentEnd
+      );
+    } else {
+      dataSource = dataSource.filter(data => {
+        return data.completionInvestment >= investmentStart && data.completionInvestment <= investmentEnd
+      });
+    }
+  } else if (params.completionInvestmentStart) {
+    dataSource = dataSource.filter(data =>
+      data.completionInvestment >= (params.completionInvestmentStart / 1)
+    );
+  } else if (params.completionInvestmentEnd) {
+    dataSource = dataSource.filter(data =>
+      data.completionInvestment <= (params.completionInvestmentEnd / 1)
+    );
+  }
+
+  // 完成率
+  if (params.completionRateStart && params.completionRateEnd) {
+    const completionRateStart = params.completionRateStart / 1;
+    const completionRateEnd = params.completionRateEnd / 1;
+    if (completionRateStart >= completionRateEnd) {
+      dataSource = dataSource.filter(data =>
+        data.completionRate <= completionRateStart && data.completionRate >= completionRateEnd
+      );
+    } else {
+      dataSource = dataSource.filter(data => {
+        return data.completionRate >= completionRateStart && data.completionRate <= completionRateEnd
+      });
+    }
+  } else if (params.completionRateStart) {
+    dataSource = dataSource.filter(data =>
+      data.completionRate >= (params.completionRateStart / 1)
+    );
+  } else if (params.completionRateEnd) {
+    dataSource = dataSource.filter(data =>
+      data.completionRate <= (params.completionRateEnd / 1)
+    );
+  }
+
+  let pageSize = 10;
+  if (params.pageSize) {
+    pageSize = params.pageSize * 1;
+  }
+
+  const result = {
+    list: dataSource,
+    pagination: {
+      total: dataSource.length,
+      pageSize,
+      current: parseInt(params.currentPage, 10) || 1,
+    },
+  };
+
+  if (res && res.json) {
+    res.json(result);
+  } else {
+    return result;
+  }
+}
+
 export default {
   getEngList,
   getEngAmountData,
+  getEngProgressionList,
 }

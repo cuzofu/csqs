@@ -94,6 +94,10 @@ export async function fakeEngStatisticsData(params) {
   return request(`/api/eng/statistics?${stringify(params)}`)
 }
 
+export async function fakeEngProgressionListData(params) {
+  return request(`/api/eng/progression?${stringify(params)}`)
+}
+
 export async function fakeOrgStatisticsData(params) {
   return request(`/api/org/statistics?${stringify(params)}`)
 }

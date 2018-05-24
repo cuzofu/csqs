@@ -187,8 +187,7 @@ export function fakeStatisticsData(req, res, u) {
     }
   }
 
-
-// 每月新增企业诚信行为曲线图
+  // 每月新增企业诚信行为曲线图
   const orgCreditDataLast12Month = [
     {
       month: '一月',
