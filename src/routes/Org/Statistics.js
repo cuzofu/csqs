@@ -12,7 +12,7 @@ import {
   Card,
   Icon,
   Radio,
-  TreeSelect,
+  Tabs,
   Tooltip as AntTooltip,
 } from 'antd';
 
@@ -28,6 +28,8 @@ import styles from './Statistics.less';
 import PageHeaderLayout from "../../layouts/PageHeaderLayout";
 import ScrollTable from '../../components/ScrollTable';
 
+const { TabPane } = Tabs;
+
 @connect(({ orgStatistics, loading }) => ({
   orgStatistics,
   loading: loading.effects['orgStatistics/fetch'],
@@ -35,7 +37,6 @@ import ScrollTable from '../../components/ScrollTable';
 export default class Statistics extends Component {
   state = {
     orgSite: 'all',
-    eqLevelTreeValue: '107010101',
   };
 
   componentDidMount() {
@@ -53,12 +54,6 @@ export default class Statistics extends Component {
   handleChangeOrgSite = (e) => {
     this.setState({
       orgSite: e.target.value,
-    });
-  };
-
-  handleChangeEqLevelTree = (val) => {
-    this.setState({
-      eqLevelTreeValue: val,
     });
   };
 
@@ -130,15 +125,6 @@ export default class Statistics extends Component {
       style: { marginTop: 24 },
     };
 
-    const doubleColResponsiveProps = {
-      xs: 24,
-      sm: 12,
-      md: 12,
-      lg: 12,
-      xl: 12,
-      style: { marginTop: 24 },
-    };
-
     const eqLevelTableColumns = [
       {
         title: '资质名称',
@@ -196,105 +182,102 @@ export default class Statistics extends Component {
 
         <Row gutter={24}>
           <Col {...singleColResponsiveProps}>
-            <Card
-              loading={loading}
-              title="企业资质类型统计"
-            >
-              <div className={styles.tableList}>
-                <ScrollTable
-                  selectDisable
-                  selectedRows={[]}
-                  loading={loading}
-                  data={eqLevelTableList}
-                  columns={eqLevelTableColumns}
-                  scroll={{y: 560}}
-                  onSelectRow={this.handleSelectRows}
-                  onChange={this.handleStandardTableChange}
-                />
-              </div>
-            </Card>
-          </Col>
-        </Row>
-
-        <Row gutter={24}>
-          <Col {...singleColResponsiveProps}>
-            <Card
-              loading={loading}
-              title="企业数量统计（按资质分）"
-            >
-              <div>
-                <Chart height={400} data={dvEqTypeData} forceFit>
-                  <Axis name="所在地" />
-                  <Axis name="企业数量" />
-                  <Legend />
-                  <Tooltip crosshairs={{type : "y"}} />
-                  <Geom type='interval' position="所在地*企业数量" color="name" adjust={[{type: 'dodge',marginRatio: 1/32}]} />
-                </Chart>
-              </div>
-            </Card>
-          </Col>
-        </Row>
-
-        <Row gutter={24}>
-          <Col {...singleColResponsiveProps}>
-            <Card
-              loading={loading}
-              bordered={false}
-              title="各资质企业数量饼图"
-              bodyStyle={{ padding: 24 }}
-              style={{ minHeight: 509, minWidth: 300 }}
-              extra={
-                <div>
-                  <div>
-                    <Radio.Group value={orgSite} onChange={this.handleChangeOrgSite}>
-                      <Radio.Button value="all">全部</Radio.Button>
-                      <Radio.Button value="local">本地</Radio.Button>
-                      <Radio.Button value="foreign">外地</Radio.Button>
-                    </Radio.Group>
-                  </div>
-                </div>
-              }
-            >
-              <Row gutter={24}>
-                <Col xl={24} lg={24} md={24} sm={24} xs={24}>
-                  <h4 style={{ marginTop: 8, marginBottom: 32 }}>{orgAmountPieSubTitle}</h4>
-                  <Pie
-                    hasLegend
-                    subTitle='企业数量'
-                    total={
-                      numeral(
-                        orgAmountPieData.reduce((pre, now) => {
-                          return now.y + pre;
-                        }, 0)
-                      ).format('0,0')
+            <Card>
+              <Tabs loading={loading} size="large" tabBarStyle={{ marginBottom: 24 }}>
+                <TabPane tab="列表" key="list">
+                  <Card
+                    loading={loading}
+                    title="企业资质类型统计"
+                  >
+                    <div className={styles.tableList}>
+                      <ScrollTable
+                        selectDisable
+                        selectedRows={[]}
+                        loading={loading}
+                        data={eqLevelTableList}
+                        columns={eqLevelTableColumns}
+                        scroll={{y: 560}}
+                        onSelectRow={this.handleSelectRows}
+                        onChange={this.handleStandardTableChange}
+                      />
+                    </div>
+                  </Card>
+                </TabPane>
+                <TabPane tab="柱状图" key="bar">
+                  <Card
+                    loading={loading}
+                    title="企业数量统计（按资质分）"
+                  >
+                    <div>
+                      <Chart height={400} data={dvEqTypeData} forceFit>
+                        <Axis name="所在地" />
+                        <Axis name="企业数量" />
+                        <Legend />
+                        <Tooltip crosshairs={{type : "y"}} />
+                        <Geom type='interval' position="所在地*企业数量" color="name" adjust={[{type: 'dodge',marginRatio: 1/32}]} />
+                      </Chart>
+                    </div>
+                  </Card>
+                </TabPane>
+                <TabPane tab="饼图" key="pie">
+                  <Card
+                    loading={loading}
+                    bordered={false}
+                    title="各资质企业数量饼图"
+                    bodyStyle={{ padding: 24 }}
+                    style={{ minHeight: 509, minWidth: 300 }}
+                    extra={
+                      <div>
+                        <div>
+                          <Radio.Group value={orgSite} onChange={this.handleChangeOrgSite}>
+                            <Radio.Button value="all">全部</Radio.Button>
+                            <Radio.Button value="local">本地</Radio.Button>
+                            <Radio.Button value="foreign">外地</Radio.Button>
+                          </Radio.Group>
+                        </div>
+                      </div>
                     }
-                    data={orgAmountPieData}
-                    valueFormat={value => numeral(value).format('0,0')}
-                    height={550}
-                    lineWidth={4}
-                  />
-                </Col>
-              </Row>
-            </Card>
-          </Col>
-        </Row>
-
-        <Row gutter={24}>
-          <Col {...singleColResponsiveProps}>
-            <Card
-              loading={loading}
-              title="最近12个月每月新增企业数量曲线图"
-            >
-              <div>
-                <Chart height={400} data={dvOrgIncreaseDataLast12Month} forceFit>
-                  <Axis name="month" />
-                  <Axis name="企业数量" label={{formatter: val => `${val}家`}} />
-                  <Legend />
-                  <Tooltip crosshairs={{type : "y"}} />
-                  <Geom type="line" position="month*企业数量" size={2} color="所在地" shape="smooth" />
-                  <Geom type='point' position="month*企业数量" size={4} color="所在地" shape="circle" style={{ stroke: '#fff', lineWidth: 1}} />
-                </Chart>
-              </div>
+                  >
+                    <Row gutter={24}>
+                      <Col xl={24} lg={24} md={24} sm={24} xs={24}>
+                        <h4 style={{ marginTop: 8, marginBottom: 32 }}>{orgAmountPieSubTitle}</h4>
+                        <Pie
+                          hasLegend
+                          subTitle='企业数量'
+                          total={
+                            numeral(
+                              orgAmountPieData.reduce((pre, now) => {
+                                return now.y + pre;
+                              }, 0)
+                            ).format('0,0')
+                          }
+                          data={orgAmountPieData}
+                          valueFormat={value => numeral(value).format('0,0')}
+                          height={550}
+                          lineWidth={4}
+                        />
+                      </Col>
+                    </Row>
+                  </Card>
+                </TabPane>
+                <TabPane tab="曲线图" key="line">
+                  <Card
+                    loading={loading}
+                    title="最近12个月每月新增企业数量曲线图"
+                  >
+                    <div>
+                      <Chart height={400} data={dvOrgIncreaseDataLast12Month} forceFit>
+                        <Axis name="month" />
+                        <Axis name="企业数量" label={{formatter: val => `${val}家`}} />
+                        <Legend />
+                        <Tooltip crosshairs={{type : "y"}} />
+                        <Geom type="line" position="month*企业数量" size={2} color="所在地" shape="smooth" />
+                        <Geom type='point' position="month*企业数量" size={4} color="所在地" shape="circle" style={{ stroke: '#fff', lineWidth: 1}} />
+                      </Chart>
+                    </div>
+                  </Card>
+                </TabPane>
+              </Tabs>
             </Card>
           </Col>
         </Row>
