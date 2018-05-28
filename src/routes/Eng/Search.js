@@ -11,6 +11,7 @@ import {
   Icon,
   Button,
   InputNumber,
+  Table,
 } from 'antd';
 import TagSelect from 'ant-design-pro/lib/TagSelect';
 
@@ -389,6 +390,7 @@ export default class Search extends Component {
     selectedRows: [],
     selectedColumns: [],
     formValues: {},
+    dtDataList: [],
   };
 
   componentDidMount() {
@@ -436,7 +438,7 @@ export default class Search extends Component {
 
         const nameColumn = [
           {
-            title: '项目名称',
+            title: '工程名称',
             dataIndex: 'name',
             key: 'name',
             index: 1,
@@ -606,6 +608,66 @@ export default class Search extends Component {
       });
 
     });
+  };
+
+  onExpand = (expanded, record) => {
+
+    const t = this;
+    const { dispatch } = this.props;
+
+    if (expanded) {
+
+      const temp = t.state.dtDataList.filter(data => data.engId === record.key.toString());
+      if (!(temp && temp.length > 0)) {
+        dispatch({
+          type: 'eng/fetchDt',
+          payload: {
+            ...record,
+          },
+        }).then(() => {
+          const {eng: {dtData}} = this.props;
+          if (dtData && dtData.list) {
+            const dtDataList = t.state.dtDataList.filter(data => data.engId !== record.key.toString());
+            dtDataList.push(dtData);
+            t.setState({
+              dtDataList,
+            });
+          }
+        })
+      }
+    }
+  };
+
+  expandedRowRender = record => {
+
+    const { dtDataList } = this.state;
+
+    const nestedColumn = [
+      {
+        title: '单体工程名称',
+        dataIndex: 'name',
+        key: 'name',
+      },
+      {
+        title: '投资额',
+        dataIndex: 'investment',
+        key: 'investment',
+      },
+      {
+        title: '面积',
+        dataIndex: 'area',
+        key: 'area',
+      },
+      {
+        title: '长度',
+        dataIndex: 'length',
+        key: 'length',
+      },
+    ];
+
+    const dataSource = dtDataList.find(data => data.engId === record.key.toString());
+
+    return <Table style={{width: 700}} columns={nestedColumn} dataSource={dataSource && dataSource.list} pagination={false} />;
   };
 
   renderQueryItemSimpleForm() {
@@ -842,7 +904,7 @@ export default class Search extends Component {
     const { getFieldDecorator } = form;
 
     return (
-      <PageHeaderLayout title="在建工程">
+      <PageHeaderLayout title="在建监督工程">
         <div className={styles.tableListForm}>{this.renderQueryItemForm()}</div>
         <Card style={{ marginTop: 24 }}>
           <Form layout="inline">
@@ -882,6 +944,8 @@ export default class Search extends Component {
               scroll={{x: tableScrollX, y: 560}}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
+              expandedRowRender={this.expandedRowRender}
+              onExpand={this.onExpand}
             />
           </div>
         </Card>

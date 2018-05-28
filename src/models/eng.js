@@ -1,4 +1,4 @@
-import { fakeEngListData } from '../services/api';
+import { fakeEngListData, fakeEngDtListData } from '../services/api';
 
 export default {
   namespace: 'eng',
@@ -8,6 +8,12 @@ export default {
       list: [],
       pagination: {},
       loading: false,
+    },
+    dtData: {
+      list: [],
+      pagination: {},
+      loading: false,
+      engId: undefined,
     },
   },
 
@@ -19,6 +25,13 @@ export default {
         payload: response,
       });
     },
+    *fetchDt({ payload }, { call, put }) {
+      const response = yield call(fakeEngDtListData, payload);
+      yield put({
+        type: 'saveDt',
+        payload: response,
+      });
+    },
   },
 
   reducers: {
@@ -27,6 +40,12 @@ export default {
         ...state,
         data: action.payload,
       };
+    },
+    saveDt(state, action) {
+      return {
+        ...state,
+        dtData: action.payload,
+      }
     },
   },
 }

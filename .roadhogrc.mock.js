@@ -6,7 +6,7 @@ import { getProfileBasicData } from './mock/profile';
 import { getProfileAdvancedData } from './mock/profile';
 import { getNotices } from './mock/notices';
 import { getOrgCredit, fakeStatisticsData } from './mock/credit';
-import { getEngList, getEngAmountData, getEngProgressionList } from './mock/eng';
+import { getEngList, getEngDtList, getEngAmountData, getEngProgressionList } from './mock/eng';
 import { getOrgStatisticsData } from './mock/org';
 import { format, delay } from 'roadhog-api-doc';
 
@@ -58,6 +58,7 @@ const proxy = {
   'GET /api/credit/org/search': getOrgCredit,
   'GET /api/credit/org/statistics': fakeStatisticsData,
   'GET /api/eng/search': getEngList,
+  'GET /api/dteng/search': getEngDtList,
   'GET /api/eng/statistics': getEngAmountData,
   'GET /api/eng/progression': getEngProgressionList,
   'GET /api/org/statistics': getOrgStatisticsData,

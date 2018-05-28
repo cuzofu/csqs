@@ -90,6 +90,10 @@ export async function fakeEngListData(params) {
   return request(`/api/eng/search?${stringify(params)}`)
 }
 
+export async function fakeEngDtListData(params) {
+  return request(`/api/dteng/search?${stringify(params)}`)
+}
+
 export async function fakeEngStatisticsData(params) {
   return request(`/api/eng/statistics?${stringify(params)}`)
 }

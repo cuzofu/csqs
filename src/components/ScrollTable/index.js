@@ -64,7 +64,7 @@ class ScrollTable extends PureComponent {
 
   renderTable = () => {
     const { selectedRowKeys, needTotalList } = this.state;
-    const { data: { list, pagination }, loading, columns, rowKey, selectDisable, scroll } = this.props;
+    const { data: { list, pagination }, loading, columns, rowKey, selectDisable, scroll, expandedRowRender, onExpand } = this.props;
 
     const paginationProps = pagination && {
       showSizeChanger: true,
@@ -114,6 +114,8 @@ class ScrollTable extends PureComponent {
             pagination={paginationProps}
             scroll={scroll}
             onChange={this.handleTableChange}
+            expandedRowRender={expandedRowRender}
+            onExpand={onExpand}
           />
         </div>
       );
@@ -129,6 +131,8 @@ class ScrollTable extends PureComponent {
             pagination={paginationProps}
             scroll={scroll}
             onChange={this.handleTableChange}
+            expandedRowRender={expandedRowRender}
+            onExpand={onExpand}
           />
         </div>
       );

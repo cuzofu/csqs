@@ -1091,6 +1091,51 @@ export const getEngAmountData = {
   engIncreaseDataLast12Month,
 };
 
+export function getEngDtList(req, res, u) {
+  let url = u;
+  if (!url || Object.prototype.toString.call(url) !== '[object String]') {
+    url = req.url; // eslint-disable-line
+  }
+
+  const engDtListDataSource = [];
+  for (let j = 0; j < 5; j += 1) {
+    engDtListDataSource.push({
+      key: j,
+      name: `单体工程${j+1}`,
+      investment: Math.floor(Math.random() * 2000) + 500,
+      area: Math.floor(Math.random() * 2000) + 500,
+      length: Math.floor(Math.random() * 2000) + 500,
+    });
+  }
+
+  let dataSource = [...engDtListDataSource];
+
+  const params = parse(url, true).query;
+
+  if (params.sorter) {
+    const s = params.sorter.split('_');
+    dataSource = dataSource.sort((prev, next) => {
+      if (s[1] === 'descend') {
+        return next[s[0]] - prev[s[0]];
+      }
+      return prev[s[0]] - next[s[0]];
+    });
+  }
+
+  const result = {
+    list: dataSource,
+    pagination: false,
+    loading: true,
+    engId: params.key,
+  };
+
+  if (res && res.json) {
+    res.json(result);
+  } else {
+    return result;
+  }
+}
+
 export function getEngList(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
@@ -1424,6 +1469,7 @@ export function getEngProgressionList(req, res, u) {
 
 export default {
   getEngList,
+  getEngDtList,
   getEngAmountData,
   getEngProgressionList,
 }
