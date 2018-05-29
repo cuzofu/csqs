@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
+import { routerRedux } from 'dva/router';
 import {
   Row,
   Col,
@@ -10,6 +11,8 @@ import {
   Icon,
   Button,
   InputNumber,
+  Modal,
+  Timeline,
 } from 'antd';
 import StandardTable from '../../../components/StandardTable';
 import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
@@ -46,6 +49,9 @@ export default class Credit extends PureComponent {
     expandForm: false,
     selectedRows: [],
     formValues: {},
+    modalVisible: false,
+    modalTitle: '',
+    modalContent: null,
   };
 
   componentDidMount() {
@@ -54,6 +60,52 @@ export default class Credit extends PureComponent {
       type: 'creditOrgSearch/fetch',
     });
   }
+
+  setModalVisible = (visible) => {
+    this.setState({
+      modalVisible: visible,
+    });
+  };
+
+  showBadBehaviorAmountModal = (item, record) => {
+    const {dispatch} = this.props;
+    this.setState({
+      modalTitle: '不良行为详情',
+      modalContent: (
+        <div>
+          <p>企业名称：{record.name}</p>
+          <p>不良行为次数：{item}</p>
+          <Timeline>
+            <Timeline.Item>创建服务现场 2015-09-01</Timeline.Item>
+            <Timeline.Item>初步排除网络异常 2015-09-01</Timeline.Item>
+            <Timeline.Item>技术测试异常 2015-09-01</Timeline.Item>
+            <Timeline.Item>网络异常正在修复 2015-09-01</Timeline.Item>
+          </Timeline>
+        </div>
+      ),
+      modalVisible: true,
+    });
+    // dispatch(routerRedux.push('/exception/404'));
+  };
+
+  showGoodBehaviorAmountModal = (item, record) => {
+    this.setState({
+      modalTitle: '良好行为详情',
+      modalContent: (
+        <div>
+          <p>企业名称：{record.name}</p>
+          <p>良好行为次数：{item}</p>
+          <Timeline>
+            <Timeline.Item>创建服务现场 2015-09-01</Timeline.Item>
+            <Timeline.Item>初步排除网络异常 2015-09-01</Timeline.Item>
+            <Timeline.Item>技术测试异常 2015-09-01</Timeline.Item>
+            <Timeline.Item>网络异常正在修复 2015-09-01</Timeline.Item>
+          </Timeline>
+        </div>
+      ),
+      modalVisible: true,
+    })
+  };
 
   clearCreditLevel = (e) => {
     e.preventDefault();
@@ -299,7 +351,7 @@ export default class Credit extends PureComponent {
 
   render() {
     const { creditOrgSearch: { data }, loading } = this.props;
-    const { selectedRows } = this.state;
+    const { selectedRows, modalVisible, modalTitle, modalContent } = this.state;
 
     const columns = [
       {
@@ -323,17 +375,15 @@ export default class Credit extends PureComponent {
         title: '不良行为次数',
         dataIndex: 'badBehaviorAmount',
         sorter: true,
-        // mark to display a total number
-        needTotal: true,
         align: 'center',
+        render: (val, record) => <div style={{cursor: 'pointer', color: 'red'}} onClick={() => this.showBadBehaviorAmountModal(val, record)}>{val}</div>,
       },
       {
         title: '良好行为次数',
         dataIndex: 'goodBehaviorAmount',
         sorter: true,
-        // mark to display a total number
-        needTotal: true,
         align: 'center',
+        render: (val, record) => <div style={{cursor: 'pointer', color: 'green'}} onClick={() => this.showGoodBehaviorAmountModal(val, record)}>{val}</div>,
       },
     ];
 
@@ -353,6 +403,16 @@ export default class Credit extends PureComponent {
             />
           </div>
         </Card>
+        <Modal
+          title={modalTitle}
+          visible={modalVisible}
+          onOk={() => this.setModalVisible(false)}
+          onCancel={() => this.setModalVisible(false)}
+        >
+          <div style={{maxHeight: '520px', overflow: 'auto'}}>
+            {modalContent}
+          </div>
+        </Modal>
       </PageHeaderLayout>
     );
   }

@@ -1,14 +1,8 @@
-import mockjs from 'mockjs';
-import { getRule, postRule } from './mock/rule';
-import { getActivities, getNotice, getFakeList } from './mock/api';
-import { getFakeChartData } from './mock/chart';
-import { getProfileBasicData } from './mock/profile';
-import { getProfileAdvancedData } from './mock/profile';
 import { getNotices } from './mock/notices';
 import { getOrgCredit, fakeStatisticsData } from './mock/credit';
 import { getEngList, getEngDtList, getEngAmountData, getEngProgressionList } from './mock/eng';
 import { getOrgStatisticsData } from './mock/org';
-import { format, delay } from 'roadhog-api-doc';
+import { delay } from 'roadhog-api-doc';
 
 // 是否禁用代理
 const noProxy = process.env.NO_PROXY === 'true';
@@ -52,8 +46,6 @@ const proxy = {
       address: 'Sidney No. 1 Lake Park',
     },
   ],
-  'GET /api/project/notice': getNotice,
-  'GET /api/activities': getActivities,
   // 企业诚信查询
   'GET /api/credit/org/search': getOrgCredit,
   'GET /api/credit/org/statistics': fakeStatisticsData,
@@ -62,26 +54,6 @@ const proxy = {
   'GET /api/eng/statistics': getEngAmountData,
   'GET /api/eng/progression': getEngProgressionList,
   'GET /api/org/statistics': getOrgStatisticsData,
-  'GET /api/rule': getRule,
-  'POST /api/rule': {
-    $params: {
-      pageSize: {
-        desc: '分页',
-        exp: 2,
-      },
-    },
-    $body: postRule,
-  },
-  'POST /api/forms': (req, res) => {
-    res.send({ message: 'Ok' });
-  },
-  'GET /api/tags': mockjs.mock({
-    'list|100': [{ name: '@city', 'value|1-100': 150, 'type|0-2': 1 }],
-  }),
-  'GET /api/fake_list': getFakeList,
-  'GET /api/fake_chart_data': getFakeChartData,
-  'GET /api/profile/basic': getProfileBasicData,
-  'GET /api/profile/advanced': getProfileAdvancedData,
   'POST /api/login/account': (req, res) => {
     const { password, userName, type } = req.body;
     console.log(password, userName, type);

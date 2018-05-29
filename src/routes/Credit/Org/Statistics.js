@@ -210,6 +210,20 @@ export default class Statistics extends Component {
 
     return (
       <PageHeaderLayout title="诚信统计">
+        <Modal
+          title="不良行为次数详情"
+          visible={this.state.modalTotalBadBehaviorLastYearVisible}
+          onOk={() => this.setModalTotalBadBehaviorLastYearVisible(false)}
+          onCancel={() => this.setModalTotalBadBehaviorLastYearVisible(false)}
+        >
+          <div style={{maxHeight: '520px', overflow: 'auto'}}>
+            <p>some contents...</p>
+            <p>some contents...</p>
+            <p>some contents...</p>
+            <p>some contents...</p>
+            <p>some contents...</p>
+          </div>
+        </Modal>
         <Fragment>
           <Row gutter={24}>
             <Col {...topColResponsiveProps}>
@@ -251,20 +265,6 @@ export default class Statistics extends Component {
               >
                 <MiniArea color="#975FE4" data={badBehaviorDataLastYear} />
               </ChartCard>
-              <Modal
-                title="不良行为次数详情"
-                visible={this.state.modalTotalBadBehaviorLastYearVisible}
-                onOk={() => this.setModalTotalBadBehaviorLastYearVisible(false)}
-                onCancel={() => this.setModalTotalBadBehaviorLastYearVisible(false)}
-              >
-                <div style={{maxHeight: '520px', overflow: 'auto'}}>
-                  <p>some contents...</p>
-                  <p>some contents...</p>
-                  <p>some contents...</p>
-                  <p>some contents...</p>
-                  <p>some contents...</p>
-                </div>
-              </Modal>
             </Col>
             <Col {...topColResponsiveProps}>
               <ChartCard
