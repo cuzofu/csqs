@@ -76,10 +76,10 @@ export default class Credit extends PureComponent {
           <p>企业名称：{record.name}</p>
           <p>不良行为次数：{item}</p>
           <Timeline>
-            <Timeline.Item>创建服务现场 2015-09-01</Timeline.Item>
-            <Timeline.Item>初步排除网络异常 2015-09-01</Timeline.Item>
-            <Timeline.Item>技术测试异常 2015-09-01</Timeline.Item>
-            <Timeline.Item>网络异常正在修复 2015-09-01</Timeline.Item>
+            <Timeline.Item color="red">创建服务现场 2015-09-01</Timeline.Item>
+            <Timeline.Item color="red">初步排除网络异常 2015-09-01</Timeline.Item>
+            <Timeline.Item color="red">技术测试异常 2015-09-01</Timeline.Item>
+            <Timeline.Item color="red">网络异常正在修复 2015-09-01</Timeline.Item>
           </Timeline>
         </div>
       ),
@@ -96,10 +96,10 @@ export default class Credit extends PureComponent {
           <p>企业名称：{record.name}</p>
           <p>良好行为次数：{item}</p>
           <Timeline>
-            <Timeline.Item>创建服务现场 2015-09-01</Timeline.Item>
-            <Timeline.Item>初步排除网络异常 2015-09-01</Timeline.Item>
-            <Timeline.Item>技术测试异常 2015-09-01</Timeline.Item>
-            <Timeline.Item>网络异常正在修复 2015-09-01</Timeline.Item>
+            <Timeline.Item color="green">创建服务现场 2015-09-01</Timeline.Item>
+            <Timeline.Item color="green">初步排除网络异常 2015-09-01</Timeline.Item>
+            <Timeline.Item color="green">技术测试异常 2015-09-01</Timeline.Item>
+            <Timeline.Item color="green">网络异常正在修复 2015-09-01</Timeline.Item>
           </Timeline>
         </div>
       ),
