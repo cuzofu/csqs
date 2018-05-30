@@ -24,15 +24,11 @@ for (let i = 0; i < 50; i += 1) {
   });
 }
 
-export function getOrgCredit(req, res, u) {
-  let url = u;
-  if (!url || Object.prototype.toString.call(url) !== '[object String]') {
-    url = req.url; // eslint-disable-line
-  }
+export function getOrgCredit(req, res) {
 
   let dataSource = [...creditListDataSource];
 
-  const params = parse(url, true).query;
+  const params = req.body;
 
   if (params.sorter) {
     const s = params.sorter.split('_');

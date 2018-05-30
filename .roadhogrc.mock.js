@@ -47,7 +47,7 @@ const proxy = {
     },
   ],
   // 企业诚信查询
-  'GET /api/credit/org/search': getOrgCredit,
+  'POST /api/credit/org/search': getOrgCredit,
   'GET /api/credit/org/statistics': fakeStatisticsData,
   'GET /api/eng/search': getEngList,
   'GET /api/dteng/search': getEngDtList,
@@ -56,7 +56,6 @@ const proxy = {
   'GET /api/org/statistics': getOrgStatisticsData,
   'POST /api/login/account': (req, res) => {
     const { password, userName, type } = req.body;
-    console.log(password, userName, type);
     if (password === '888888' && userName === 'admin') {
       res.send({
         status: 'ok',
@@ -74,7 +73,7 @@ const proxy = {
       return;
     }
     res.send({
-      status: 'ok',
+      status: 'error',
       type,
       currentAuthority: 'guest',
     });

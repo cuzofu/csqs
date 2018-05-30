@@ -20,7 +20,10 @@ export async function queryNotices() {
 }
 
 export async function queryOrgCredit(params) {
-  return request(`/api/credit/org/search?${stringify(params)}`)
+  return request('/api/credit/org/search', {
+    method: 'POST',
+    body: params,
+  })
 }
 
 export async function fakeStatisticsData(params) {
