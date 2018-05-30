@@ -107,6 +107,7 @@ class BasicLayout extends React.PureComponent {
     });
     this.props.dispatch({
       type: 'user/fetchCurrent',
+      payload: localStorage.getItem('authority'),
     });
   }
   componentWillUnmount() {
@@ -169,6 +170,10 @@ class BasicLayout extends React.PureComponent {
     if (key === 'logout') {
       this.props.dispatch({
         type: 'login/logout',
+      }).then(() => {
+        this.props.dispatch({
+          type: 'user/clearUser',
+        });
       });
     }
   };

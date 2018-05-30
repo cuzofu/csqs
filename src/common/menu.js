@@ -5,7 +5,7 @@ const menuData = [
     name: '企业信息',
     icon: 'form',
     path: 'org',
-    authority: 'admin',
+    authority: ['admin', 'user', 'guest'],
     children: [
       {
         name: '企业统计',
