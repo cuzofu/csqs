@@ -48,8 +48,11 @@ for (let i = 0; i < 7; i += 1) {
 export default class Statistics extends Component {
   state = {
     rangePickerValue: getTimeDistance('month'),
-    modalTotalBadBehaviorLastYearVisible: false,
-    modalTotalGoodBehaviorLastYearVisible: false,
+    modal: {
+      title: '',
+      visible: false,
+      content: undefined,
+    },
   };
 
   componentDidMount() {
@@ -76,15 +79,72 @@ export default class Statistics extends Component {
     });
   }
 
-  setModalTotalBadBehaviorLastYearVisible = (visible) => {
+  onBadBehaviorBarClick = (ev) => {
+    if (!ev && !ev.data && !ev.data._origin) {
+      return;
+    }
+    const {_origin} = ev.data;
+    const badBehavior = [];
+    for (let i = 0; i < _origin.y; i += 1) {
+      badBehavior.push(<p key={i}>不良行为{i+1}</p>);
+    }
+    const modal = {
+      title: `${_origin.x}类不良行为详情`,
+      visible: true,
+      content: (
+        <div>
+          <p>共发生{_origin.y}次不良行为</p>
+          {badBehavior.map( item => item)}
+        </div>
+      ),
+    };
     this.setState({
-      modalTotalBadBehaviorLastYearVisible: visible,
+      modal,
     });
   };
 
-  setModalTotalGoodBehaviorLastYearVisible = (visible) => {
+  setModalVisible = (visible) => {
+    const {modal} = this.state;
     this.setState({
-      modalTotalGoodBehaviorLastYearVisible: visible,
+      modal: {
+        ...modal,
+        visible,
+      },
+    });
+  };
+
+  badBehaviorClick = () => {
+    const modal = {
+      title: '不良行为详情',
+      visible: true,
+      content: (
+        <div>
+          <p>不良行为1...</p>
+          <p>不良行为2...</p>
+          <p>不良行为3...</p>
+        </div>
+      ),
+    };
+    this.setState({
+      modal,
+    });
+  };
+
+  goodBehaviorClick = () => {
+    const modal = {
+      title: '良好行为详情',
+      visible: true,
+      content: (
+        <div>
+          <p>良好行为1...</p>
+          <p>良好行为2...</p>
+          <p>良好行为3...</p>
+          <p>良好行为4...</p>
+        </div>
+      ),
+    };
+    this.setState({
+      modal,
     });
   };
 
@@ -172,19 +232,24 @@ export default class Statistics extends Component {
       </div>
     );
 
-    const { creditOrgStatistics, loading } = this.props;
-    const {
+    const { creditOrgStatistics: {
       badBehaviorDataLastYear,
       goodBehaviorDataLastYear,
       badBehaviorGroupByDistrict,
       goodBehaviorGroupByDistrict,
       orgCreditDataLast12Month,
-    } = creditOrgStatistics;
+      badBehaviorGroupByType,
+      badBehaviorRankData,
+    }, loading } = this.props;
+
+    console.log(badBehaviorGroupByType);
     let totalBadBehaviorLastYear = 0;
     let totalGoodBehaviorLastYear = 0;
-    badBehaviorDataLastYear.forEach( val => {
-      totalBadBehaviorLastYear += val.y
-    });
+    if (badBehaviorDataLastYear.loading) {
+      badBehaviorDataLastYear.data.forEach( val => {
+        totalBadBehaviorLastYear += val.y
+      });
+    }
     goodBehaviorDataLastYear.forEach( val => {
       totalGoodBehaviorLastYear += val.y
     });
@@ -198,7 +263,6 @@ export default class Statistics extends Component {
       value: '次数', // value字段
     });
 
-
     const singleColResponsiveProps = {
       xs: 24,
       sm: 24,
@@ -211,17 +275,13 @@ export default class Statistics extends Component {
     return (
       <PageHeaderLayout title="诚信统计">
         <Modal
-          title="不良行为次数详情"
-          visible={this.state.modalTotalBadBehaviorLastYearVisible}
-          onOk={() => this.setModalTotalBadBehaviorLastYearVisible(false)}
-          onCancel={() => this.setModalTotalBadBehaviorLastYearVisible(false)}
+          title={this.state.modal.title}
+          visible={this.state.modal.visible}
+          onOk={() => this.setModalVisible(false)}
+          onCancel={() => this.setModalVisible(false)}
         >
-          <div style={{maxHeight: '520px', overflow: 'auto'}}>
-            <p>some contents...</p>
-            <p>some contents...</p>
-            <p>some contents...</p>
-            <p>some contents...</p>
-            <p>some contents...</p>
+          <div style={{maxHeight: '520px', maxWidth: '760px', overflow: 'auto'}}>
+            {this.state.modal.content}
           </div>
         </Modal>
         <Fragment>
@@ -250,7 +310,7 @@ export default class Statistics extends Component {
             </Col>
             <Col {...topColResponsiveProps}>
               <ChartCard
-                onClick={() => this.setModalTotalBadBehaviorLastYearVisible(true)}
+                onClick={() => this.badBehaviorClick(true)}
                 loading={loading}
                 bordered={false}
                 title="不良行为次数"
@@ -263,12 +323,12 @@ export default class Statistics extends Component {
                 footer={<Field label="本月产生次数" value={numeral(12).format('0,0')} />}
                 contentHeight={46}
               >
-                <MiniArea color="#975FE4" data={badBehaviorDataLastYear} />
+                <MiniArea color="#975FE4" data={badBehaviorDataLastYear.data} />
               </ChartCard>
             </Col>
             <Col {...topColResponsiveProps}>
               <ChartCard
-                onClick={() => this.setModalTotalGoodBehaviorLastYearVisible(true)}
+                onClick={() => this.goodBehaviorClick(true)}
                 loading={loading}
                 bordered={false}
                 title="良好行为次数"
@@ -283,19 +343,40 @@ export default class Statistics extends Component {
               >
                 <MiniArea color="#975FE4" data={goodBehaviorDataLastYear} />
               </ChartCard>
-              <Modal
-                title="良好行为次数详情"
-                visible={this.state.modalTotalGoodBehaviorLastYearVisible}
-                onOk={() => this.setModalTotalGoodBehaviorLastYearVisible(false)}
-                onCancel={() => this.setModalTotalGoodBehaviorLastYearVisible(false)}
-              >
-                <p>some contents...</p>
-                <p>some contents...</p>
-                <p>some contents...</p>
-              </Modal>
             </Col>
           </Row>
         </Fragment>
+
+        <Card loading={loading} bordered={false} bodyStyle={{ padding: 0, marginBottom: 20 }}>
+          <div className={styles.behaviorCard}>
+            <Tabs loading={loading} tabBarExtraContent={behaviorExtra} size="large" tabBarStyle={{ marginBottom: 24 }}>
+              <TabPane tab="不良行为分类统计" key="badBehaviorGroupByType">
+                <Row>
+                  <Col xl={16} lg={16} md={24} sm={24} xs={24}>
+                    <div className={styles.behaviorBar}>
+                      <Bar height={295} data={badBehaviorGroupByType} onPlotClick={(ev) => this.onBadBehaviorBarClick(ev)} />
+                    </div>
+                  </Col>
+                  <Col xl={8} lg={8} md={24} sm={24} xs={24}>
+                    <div className={styles.behaviorRank}>
+                      <h4 className={styles.rankingTitle}>不良行为排名</h4>
+                      <ul className={styles.rankingList}>
+                        {badBehaviorRankData.map((item, i) => (
+                          <li key={item.title}>
+                            <span className={i < 3 ? styles.active : ''}>{i + 1}</span>
+                            <span>{item.title}</span>
+                            <span>{numeral(item.total).format('0,0')}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </Col>
+                </Row>
+              </TabPane>
+            </Tabs>
+          </div>
+        </Card>
+
         <Card loading={loading} bordered={false} bodyStyle={{ padding: 0 }}>
           <div className={styles.behaviorCard}>
             <Tabs loading={loading} tabBarExtraContent={behaviorExtra} size="large" tabBarStyle={{ marginBottom: 24 }}>
@@ -356,7 +437,7 @@ export default class Statistics extends Component {
               title="最近12个月每月新增诚信行为记录数量曲线图"
             >
               <div>
-                <Chart height={400} data={dvOrgCreditDataLast12Month} forceFit>
+                <Chart height={400} data={dvOrgCreditDataLast12Month} onPlotClick={(ev) => {console.log(ev.data && ev.data._origin)}} forceFit>
                   <Axis name="month" />
                   <Axis name="次数" label={{formatter: val => `${val}次`}} />
                   <Legend />

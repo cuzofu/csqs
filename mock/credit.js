@@ -171,7 +171,7 @@ export function fakeStatisticsData(req, res, u) {
       });
     }
 
-    for (let i = 0; i < 12; i += 1) {
+    for (let i = 0; i < 13; i += 1) {
       badBehaviorGroupByDistrict.push({
         x: `${district[i]}`,
         y: Math.floor(Math.random() * 100) + 20,
@@ -248,7 +248,7 @@ export function fakeStatisticsData(req, res, u) {
   ];
 
   const result = {
-    badBehaviorDataLastYear,
+    // badBehaviorDataLastYear,
     goodBehaviorDataLastYear,
     badBehaviorGroupByDistrict,
     goodBehaviorGroupByDistrict,
@@ -262,7 +262,114 @@ export function fakeStatisticsData(req, res, u) {
   }
 }
 
+export function fakeBadBehaviorDataLastYear(req, res, u) {
+  let url = u;
+  if (!url || Object.prototype.toString.call(url) !== '[object String]') {
+    url = req.url; // eslint-disable-line
+  }
+
+  const params = parse(url, true).query;
+
+  const fakeBadBehaviorData = [7, 5, 4, 2, 4, 7, 5, 6, 5, 9, 6, 3];
+  const badBehaviorDataLastYear = [];
+
+  if (params.startTime && params.endTime) {
+    for (let i = 0; i < fakeBadBehaviorData.length; i += 1) {
+      badBehaviorDataLastYear.push({
+        x: `2017年${i + 1}月`,
+        y: fakeBadBehaviorData[i],
+      });
+    }
+  }
+
+  if (res && res.json) {
+    res.json(badBehaviorDataLastYear);
+  } else {
+    return badBehaviorDataLastYear;
+  }
+}
+
+export function fakeBadBehaviorDataGroupByType(req, res, u) {
+  let url = u;
+  if (!url || Object.prototype.toString.call(url) !== '[object String]') {
+    url = req.url; // eslint-disable-line
+  }
+
+  console.log('/elastic_sskj/api/credit/org/behfltj');
+  const params = parse(url, true).query;
+
+  const type = ['资质管理', '质量安全建筑节能管理', '市场行为管理', '招投标管理', '其他'];
+
+  const badBehaviorGroupByType = [];
+  if (params.startTime && params.endTime) {
+    for (let i = 0; i < 5; i += 1) {
+      badBehaviorGroupByType.push({
+        x: `${type[i]}`,
+        y: Math.floor(Math.random() * 100) + 20,
+      });
+    }
+  }
+
+  if (res && res.json) {
+    res.json(badBehaviorGroupByType);
+  } else {
+    return badBehaviorGroupByType;
+  }
+}
+
+export function fakeBadBehaviorRankData(req, res, u) {
+  let url = u;
+  if (!url || Object.prototype.toString.call(url) !== '[object String]') {
+    url = req.url; // eslint-disable-line
+  }
+
+  const params = parse(url, true).query;
+
+  let badBehaviorRankData = [];
+  if (params.startTime && params.endTime) {
+    badBehaviorRankData = [
+      {
+        title: "超越资质等级违规从事生产经营活动",
+        total: 20,
+      },
+      {
+        title: "特种作业人员无证上岗",
+        total: 19,
+      },
+      {
+        title: "将工程转包或者违法分包",
+        total: 17,
+      },
+      {
+        title: "涂改资质证书",
+        total: 15,
+      },
+      {
+        title: "相互串通投标",
+        total: 11,
+      },
+      {
+        title: "施工现场未实行封闭围挡",
+        total: 10,
+      },
+      {
+        title: "未取得施工许可证擅自施工",
+        total: 9,
+      },
+    ];
+  }
+
+  if (res && res.json) {
+    res.json(badBehaviorRankData);
+  } else {
+    return badBehaviorRankData;
+  }
+}
+
 export default {
   getOrgCredit,
   fakeStatisticsData,
+  fakeBadBehaviorDataLastYear,
+  fakeBadBehaviorDataGroupByType,
+  fakeBadBehaviorRankData,
 }

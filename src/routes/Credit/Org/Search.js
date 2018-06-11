@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
+import { stringify } from 'qs';
 import { routerRedux } from 'dva/router';
 import {
   Row,
@@ -149,7 +150,8 @@ export default class Credit extends PureComponent {
       ...filters,
     };
     if (sorter.field) {
-      params.sorter = `${sorter.field}_${sorter.order}`;
+      params.sort = `${sorter.field}`;
+      params.direction = `${sorter.order}`;
     }
 
     dispatch({
@@ -192,16 +194,19 @@ export default class Credit extends PureComponent {
 
       const values = {
         ...fieldsValue,
-        creditLevel: fieldsValue.creditLevel && fieldsValue.creditLevel.join(','),
+        // creditLevel: fieldsValue.creditLevel,
       };
 
       this.setState({
         formValues: values,
       });
 
+      console.log(values.creditLevel);
       dispatch({
         type: 'creditOrgSearch/fetch',
-        payload: values,
+        payload: JSON.stringify({
+          ...values,
+        }),
       });
     });
   };
@@ -352,7 +357,6 @@ export default class Credit extends PureComponent {
   render() {
     const { creditOrgSearch: { data }, loading } = this.props;
     const { selectedRows, modalVisible, modalTitle, modalContent } = this.state;
-
     const columns = [
       {
         title: '企业名称',
@@ -396,7 +400,7 @@ export default class Credit extends PureComponent {
               selectDisable
               selectedRows={selectedRows}
               loading={loading}
-              data={data}
+              data={!data ? {list: [], pagination: false} : data}
               columns={columns}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}

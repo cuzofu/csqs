@@ -62,6 +62,7 @@ class Bar extends Component {
       data,
       color = 'rgba(24, 144, 255, 0.85)',
       padding,
+      onPlotClick,
     } = this.props;
 
     const { autoHideXLabels } = this.state;
@@ -93,6 +94,7 @@ class Bar extends Component {
             forceFit={forceFit}
             data={data}
             padding={padding || 'auto'}
+            onPlotClick={(ev) => onPlotClick && onPlotClick(ev)}
           >
             <Axis
               name="x"

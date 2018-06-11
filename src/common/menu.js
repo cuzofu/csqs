@@ -5,7 +5,7 @@ const menuData = [
     name: '企业信息',
     icon: 'form',
     path: 'org',
-    authority: ['admin', 'user', 'guest'],
+    // authority: ['admin', 'user', 'guest'],
     children: [
       {
         name: '企业统计',
@@ -17,7 +17,7 @@ const menuData = [
     name: '建筑工程',
     icon: 'form',
     path: 'eng',
-    authority: 'admin',
+    // authority: 'admin',
     children: [
       {
         name: '工程统计',
@@ -37,7 +37,7 @@ const menuData = [
     name: '企业诚信',
     icon: 'form',
     path: 'credit/org',
-    authority: 'admin',
+    // authority: 'admin',
     children: [
       {
         name: '诚信查询',
@@ -46,6 +46,18 @@ const menuData = [
       {
         name: '诚信统计',
         path: 'statistics',
+      },
+    ],
+  },
+  {
+    name: '人员信息',
+    icon: 'form',
+    path: 'employee',
+    // authority: 'admin',
+    children: [
+      {
+        name: '个人信息查询',
+        path: 'search',
       },
     ],
   },

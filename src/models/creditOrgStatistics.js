@@ -1,32 +1,54 @@
-import { fakeStatisticsData } from '../services/api';
+import {
+  fakeStatisticsData,
+  fakeBadBehaviorDataLastYear,
+  fakeBadBehaviorDataGroupByType,
+  fakeBadBehaviorRankData,
+} from '../services/api';
 
 export default {
   namespace: 'creditOrgStatistics',
 
   state: {
-    badBehaviorDataLastYear: [],
+    badBehaviorDataLastYear: {
+      data: [],
+      loading: false,
+    },
     goodBehaviorDataLastYear: [],
     badBehaviorGroupByDistrict: [],
     goodBehaviorGroupByDistrict: [],
     orgCreditDataLast12Month: [],
-    loading: false,
+    badBehaviorGroupByType: [],
+    badBehaviorRankData: [],
   },
 
   effects: {
     *fetch({ payload }, { call, put }) {
-      const response = yield call(fakeStatisticsData, payload);
+      const statisticsData = yield call(fakeStatisticsData, payload);
+      const badBehaviorDataLastYear = yield call(fakeBadBehaviorDataLastYear, payload);
+      const badBehaviorGroupByType = yield call(fakeBadBehaviorDataGroupByType, payload);
+      const badBehaviorRankData = yield call(fakeBadBehaviorRankData, payload);
       yield put({
         type: 'save',
-        payload: response,
+        payload: {
+          ...statisticsData,
+          badBehaviorDataLastYear: {
+            data: badBehaviorDataLastYear,
+            loading: true,
+          },
+          badBehaviorGroupByType,
+          badBehaviorRankData,
+        },
       });
     },
     *fetchDataGroupByDistrict({ payload }, { call, put }) {
       const response = yield call(fakeStatisticsData, payload);
+      const badBehaviorGroupByType = yield call(fakeBadBehaviorDataGroupByType, payload);
       yield put({
         type: 'save',
         payload: {
           badBehaviorGroupByDistrict: response.badBehaviorGroupByDistrict,
           goodBehaviorGroupByDistrict: response.goodBehaviorGroupByDistrict,
+          badBehaviorGroupByType,
         },
       });
     },
@@ -41,11 +63,16 @@ export default {
     },
     clear() {
       return {
-        badBehaviorDataLastYear: [],
+        badBehaviorDataLastYear: {
+          data: [],
+          loading: false,
+        },
         goodBehaviorDataLastYear: [],
         badBehaviorGroupByDistrict: [],
         goodBehaviorGroupByDistrict: [],
         orgCreditDataLast12Month: [],
+        badBehaviorGroupByType: [],
+        badBehaviorRankData: [],
       };
     },
   },

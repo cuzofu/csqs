@@ -90,6 +90,9 @@ export const getRouterData = app => {
     '/credit/org/statistics': {
       component: dynamicWrapper(app, ['creditOrgStatistics'], () => import('../routes/Credit/Org/Statistics')),
     },
+    '/employee/search': {
+      component: dynamicWrapper(app, ['employee'], () => import('../routes/Employee/Search')),
+    },
     '/exception/403': {
       component: dynamicWrapper(app, [], () => import('../routes/Exception/403')),
     },

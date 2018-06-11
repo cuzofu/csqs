@@ -20,7 +20,7 @@ export async function queryNotices() {
 }
 
 export async function queryOrgCredit(params) {
-  return request('/api/credit/org/search', {
+  return request('/elastic_sskj/api/credit/org/search', {
     method: 'POST',
     body: params,
   })
@@ -28,6 +28,19 @@ export async function queryOrgCredit(params) {
 
 export async function fakeStatisticsData(params) {
   return request(`/api/credit/org/statistics?${stringify(params)}`)
+}
+
+export async function fakeBadBehaviorDataLastYear(params) {
+  return request(`/api/credit/org/statistics/badBehaviorDataLastYear?${stringify(params)}`)
+}
+
+export async function fakeBadBehaviorDataGroupByType(params) {
+  // const { startTime, endTime } = params;
+  return request(`/elastic_sskj/api/credit/org/behfltj?${stringify(params)}`); // /${startTime}/${endTime}
+}
+
+export async function fakeBadBehaviorRankData(params) {
+  return request(`/api/credit/org/statistics/badBehaviorRankData?${stringify(params)}`);
 }
 
 export async function fakeEngListData(params) {

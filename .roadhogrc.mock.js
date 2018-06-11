@@ -1,5 +1,11 @@
 import { getNotices } from './mock/notices';
-import { getOrgCredit, fakeStatisticsData } from './mock/credit';
+import {
+  getOrgCredit,
+  fakeStatisticsData,
+  fakeBadBehaviorDataLastYear,
+  fakeBadBehaviorDataGroupByType,
+  fakeBadBehaviorRankData
+} from './mock/credit';
 import { getEngList, getEngDtList, getEngAmountData, getEngProgressionList } from './mock/eng';
 import { getOrgStatisticsData } from './mock/org';
 import { delay } from 'roadhog-api-doc';
@@ -59,8 +65,12 @@ const proxy = {
     },
   ],
   // 企业诚信查询
-  'POST /api/credit/org/search': getOrgCredit,
+  'POST /elastic_sskj/api/credit/org/search': getOrgCredit,
   'GET /api/credit/org/statistics': fakeStatisticsData,
+  'GET /api/credit/org/statistics/badBehaviorDataLastYear': fakeBadBehaviorDataLastYear,
+  // 'GET /api/credit/org/statistics/badBehaviorDataGroupByType': fakeBadBehaviorDataGroupByType,
+  'GET /api/credit/org/statistics/badBehaviorRankData': fakeBadBehaviorRankData,
+  'GET /elastic_sskj/api/credit/org/behfltj': fakeBadBehaviorDataGroupByType,
   'GET /api/eng/search': getEngList,
   'GET /api/dteng/search': getEngDtList,
   'GET /api/eng/statistics': getEngAmountData,
@@ -132,4 +142,7 @@ const proxy = {
   },
 };
 
-export default (noProxy ? {} : delay(proxy, 1000));
+export default (noProxy ? {
+  "POST /elastic_sskj/*": "http://192.168.0.204:8180/",
+  "GET /elastic_sskj/*": "http://192.168.0.204:8180/",
+} : delay(proxy, 1000));
