@@ -52,7 +52,6 @@ export default class Credit extends PureComponent {
     formValues: {},
     modalVisible: false,
     modalTitle: '',
-    modalContent: null,
   };
 
   componentDidMount() {
@@ -70,40 +69,36 @@ export default class Credit extends PureComponent {
 
   showBadBehaviorAmountModal = (item, record) => {
     const {dispatch} = this.props;
+
+    dispatch({
+      type: 'creditOrgSearch/cleanCreditDetail',
+    });
+    dispatch({
+      type: 'creditOrgSearch/fetchDetail',
+      payload: {
+        type: 'ST002',
+        id: record.id,
+      },
+    });
+
     this.setState({
       modalTitle: '不良行为详情',
-      modalContent: (
-        <div>
-          <p>企业名称：{record.name}</p>
-          <p>不良行为次数：{item}</p>
-          <Timeline>
-            <Timeline.Item color="red">创建服务现场 2015-09-01</Timeline.Item>
-            <Timeline.Item color="red">初步排除网络异常 2015-09-01</Timeline.Item>
-            <Timeline.Item color="red">技术测试异常 2015-09-01</Timeline.Item>
-            <Timeline.Item color="red">网络异常正在修复 2015-09-01</Timeline.Item>
-          </Timeline>
-        </div>
-      ),
       modalVisible: true,
     });
     // dispatch(routerRedux.push('/exception/404'));
   };
 
   showGoodBehaviorAmountModal = (item, record) => {
+    const {dispatch} = this.props;
+    dispatch({
+      type: 'creditOrgSearch/fetchDetail',
+      payload: {
+        type: 'ST001',
+        id: record.id,
+      },
+    });
     this.setState({
       modalTitle: '良好行为详情',
-      modalContent: (
-        <div>
-          <p>企业名称：{record.name}</p>
-          <p>良好行为次数：{item}</p>
-          <Timeline>
-            <Timeline.Item color="green">创建服务现场 2015-09-01</Timeline.Item>
-            <Timeline.Item color="green">初步排除网络异常 2015-09-01</Timeline.Item>
-            <Timeline.Item color="green">技术测试异常 2015-09-01</Timeline.Item>
-            <Timeline.Item color="green">网络异常正在修复 2015-09-01</Timeline.Item>
-          </Timeline>
-        </div>
-      ),
       modalVisible: true,
     })
   };
@@ -201,7 +196,6 @@ export default class Credit extends PureComponent {
         formValues: values,
       });
 
-      console.log(values.creditLevel);
       dispatch({
         type: 'creditOrgSearch/fetch',
         payload: JSON.stringify({
@@ -355,8 +349,8 @@ export default class Credit extends PureComponent {
   }
 
   render() {
-    const { creditOrgSearch: { data }, loading } = this.props;
-    const { selectedRows, modalVisible, modalTitle, modalContent } = this.state;
+    const { creditOrgSearch: { data, creditDetail }, loading } = this.props;
+    const { selectedRows, modalVisible, modalTitle } = this.state;
     const columns = [
       {
         title: '企业名称',
@@ -408,13 +402,31 @@ export default class Credit extends PureComponent {
           </div>
         </Card>
         <Modal
+          closable
+          width={window.innerWidth / 3 * 2}
           title={modalTitle}
           visible={modalVisible}
           onOk={() => this.setModalVisible(false)}
           onCancel={() => this.setModalVisible(false)}
         >
           <div style={{maxHeight: '520px', overflow: 'auto'}}>
-            {modalContent}
+            <Timeline>
+              {
+                creditDetail.data && creditDetail.data.map(cd => {
+                  return (
+                    <Timeline.Item color="red" key={cd.ID}>
+                      <p>名称：{cd.CIONAME}</p>
+                      <p>工程：{cd.ENG}</p>
+                      <p>行为：{cd.SF}</p>
+                      <p>开始时间：{cd.BEGINDATE}</p>
+                      <p>结束时间：{cd.ENDDATE}</p>
+                      <p>应扣分：{cd.SFVAL}</p>
+                      <p>实际扣分：{cd.RAL}</p>
+                    </Timeline.Item>
+                  )
+                })
+              }
+            </Timeline>
           </div>
         </Modal>
       </PageHeaderLayout>

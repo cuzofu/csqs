@@ -262,7 +262,7 @@ export function fakeStatisticsData(req, res, u) {
   }
 }
 
-export function fakeBadBehaviorDataLastYear(req, res, u) {
+export function fakeBadBehaviorMiniBar(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line
@@ -289,13 +289,39 @@ export function fakeBadBehaviorDataLastYear(req, res, u) {
   }
 }
 
+export function fakeGoodBehaviorMiniBar(req, res, u) {
+  let url = u;
+  if (!url || Object.prototype.toString.call(url) !== '[object String]') {
+    url = req.url; // eslint-disable-line
+  }
+
+  const params = parse(url, true).query;
+
+  const fakeGoodBehaviorData = [7, 5, 4, 2, 4, 7, 5, 6, 5, 9, 6, 3];
+  const goodBehaviorDataLastYear = [];
+
+  if (params.startTime && params.endTime) {
+    for (let i = 0; i < fakeGoodBehaviorData.length; i += 1) {
+      goodBehaviorDataLastYear.push({
+        x: `2017年${i + 1}月`,
+        y: fakeGoodBehaviorData[i],
+      });
+    }
+  }
+
+  if (res && res.json) {
+    res.json(goodBehaviorDataLastYear);
+  } else {
+    return goodBehaviorDataLastYear;
+  }
+}
+
 export function fakeBadBehaviorDataGroupByType(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line
   }
 
-  console.log('/elastic_sskj/api/credit/org/behfltj');
   const params = parse(url, true).query;
 
   const type = ['资质管理', '质量安全建筑节能管理', '市场行为管理', '招投标管理', '其他'];
@@ -369,7 +395,8 @@ export function fakeBadBehaviorRankData(req, res, u) {
 export default {
   getOrgCredit,
   fakeStatisticsData,
-  fakeBadBehaviorDataLastYear,
+  fakeBadBehaviorMiniBar,
+  fakeGoodBehaviorMiniBar,
   fakeBadBehaviorDataGroupByType,
   fakeBadBehaviorRankData,
 }

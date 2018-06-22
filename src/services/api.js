@@ -26,21 +26,37 @@ export async function queryOrgCredit(params) {
   })
 }
 
-export async function fakeStatisticsData(params) {
+export async function queryOrgCreditDetail(params) {
+  return request(`/elastic_sskj/api/credit/org/behmx/${params.type}/${params.id}`);
+}
+
+// 不良行为分类统计数据
+export async function getBadBehaviorDataGroupByType(params) {
+  const url = `/elastic_sskj/api/credit/org/behfltj/${params.zzType}/${params.startTime}/${params.endTime}`;
+  return request(url);
+}
+
+export async function getBadBehaviorRankData(params) {
+  const url = `/elastic_sskj/api/credit/org/behRanking/${params.zzType}/${params.startTime}/${params.endTime}`;
+  return request(url);
+}
+
+// 不良行为分类统计数据详情
+export async function getBadBehaviorDataGroupByTypeDetail(params) {
+  const url = `/elastic_sskj/api/credit/org/behDetail/${params.id}/${params.startTime}/${params.endTime}`;
+  return request(url);
+}
+
+export async function getStatisticsData(params) {
   return request(`/api/credit/org/statistics?${stringify(params)}`)
 }
 
-export async function fakeBadBehaviorDataLastYear(params) {
-  return request(`/api/credit/org/statistics/badBehaviorDataLastYear?${stringify(params)}`)
+export async function getBadBehaviorMiniBar(params) {
+  return request(`/api/credit/org/statistics/badBehaviorMiniBar?${stringify(params)}`)
 }
 
-export async function fakeBadBehaviorDataGroupByType(params) {
-  // const { startTime, endTime } = params;
-  return request(`/elastic_sskj/api/credit/org/behfltj?${stringify(params)}`); // /${startTime}/${endTime}
-}
-
-export async function fakeBadBehaviorRankData(params) {
-  return request(`/api/credit/org/statistics/badBehaviorRankData?${stringify(params)}`);
+export async function getGoodBehaviorMiniBar(params) {
+  return request(`/api/credit/org/statistics/goodBehaviorMiniBar?${stringify(params)}`)
 }
 
 export async function fakeEngListData(params) {

@@ -2,7 +2,8 @@ import { getNotices } from './mock/notices';
 import {
   getOrgCredit,
   fakeStatisticsData,
-  fakeBadBehaviorDataLastYear,
+  fakeBadBehaviorMiniBar,
+  fakeGoodBehaviorMiniBar,
   fakeBadBehaviorDataGroupByType,
   fakeBadBehaviorRankData
 } from './mock/credit';
@@ -14,6 +15,7 @@ import { getAuthority } from './src/utils/authority';
 
 // 是否禁用代理
 const noProxy = process.env.NO_PROXY === 'true';
+const host = '192.168.0.204:8180'; //'111.47.65.193:8870';
 
 // 代码中会兼容本地 service mock 以及部署站点的静态数据
 const proxy = {
@@ -34,7 +36,7 @@ const proxy = {
         userid: '00000002',
         notifyCount: 1,
       });
-    } else if (userName === 'guest') {
+    } else {
       res.send({
         name: 'Guest',
         avatar: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
@@ -65,12 +67,17 @@ const proxy = {
     },
   ],
   // 企业诚信查询
-  'POST /elastic_sskj/api/credit/org/search': getOrgCredit,
+  'POST /elastic_sskj/api/credit/org/(.*)': `http://${host}/elastic_sskj/api/credit/org/`,
+  'GET /elastic_sskj/api/credit/org/(.*)': `http://${host}/elastic_sskj/api/credit/org/`,
+  // 不良行为分类(按企业资质分)
+  // 'GET /elastic_sskj/api/credit/org/behfltj/(.*)': `http://${host}/elastic_sskj/api/credit/org/behfltj/`, // getBadBehaviorDataGroupByType
+  // 不良行为分类统计详情
+  // 'GET /elastic_sskj/api/credit/org/behDetail/(.*)': `http://${host}/elastic_sskj/api/credit/org/behDetail/`,
+  'GET /api/credit/org/statistics/badBehaviorMiniBar': fakeBadBehaviorMiniBar,
+  'GET /api/credit/org/statistics/goodBehaviorMiniBar': fakeGoodBehaviorMiniBar,
+  // 'GET /api/credit/org/statistics/badBehaviorDataGroupByType': getBadBehaviorDataGroupByType,
   'GET /api/credit/org/statistics': fakeStatisticsData,
-  'GET /api/credit/org/statistics/badBehaviorDataLastYear': fakeBadBehaviorDataLastYear,
-  // 'GET /api/credit/org/statistics/badBehaviorDataGroupByType': fakeBadBehaviorDataGroupByType,
   'GET /api/credit/org/statistics/badBehaviorRankData': fakeBadBehaviorRankData,
-  'GET /elastic_sskj/api/credit/org/behfltj': fakeBadBehaviorDataGroupByType,
   'GET /api/eng/search': getEngList,
   'GET /api/dteng/search': getEngDtList,
   'GET /api/eng/statistics': getEngAmountData,
@@ -143,6 +150,6 @@ const proxy = {
 };
 
 export default (noProxy ? {
-  "POST /elastic_sskj/*": "http://192.168.0.204:8180/",
-  "GET /elastic_sskj/*": "http://192.168.0.204:8180/",
+  "POST /elastic_sskj/*": `http://${host}/`,
+  "GET /elastic_sskj/*": `http://${host}/`,
 } : delay(proxy, 1000));
