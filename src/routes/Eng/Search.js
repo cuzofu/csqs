@@ -610,7 +610,7 @@ export default class Search extends Component {
     });
   };
 
-  onExpand = (expanded, record) => {
+  expand = (expanded, record) => {
 
     const t = this;
     const { dispatch } = this.props;
@@ -945,7 +945,7 @@ export default class Search extends Component {
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
               expandedRowRender={this.expandedRowRender}
-              onExpand={this.onExpand}
+              onExpand={this.expand}
             />
           </div>
         </Card>
