@@ -11,15 +11,17 @@ import { getEngList, getEngDtList, getEngAmountData, getEngProgressionList } fro
 import { getOrgStatisticsData } from './mock/org';
 import { delay } from 'roadhog-api-doc';
 
-import { getAuthority } from './src/utils/authority';
+// import { getAuthority } from './src/utils/authority';
 
 // 是否禁用代理
 const noProxy = process.env.NO_PROXY === 'true';
-const host = '192.168.0.204:8180'; //'111.47.65.193:8870';
+const host = 'http://www.ycjsjg.net'; //'111.47.65.193:8870', 192.168.0.205:8180; www.ycjsjg.net
+const myjsonapi = 'https://api.myjson.com';
 
 // 代码中会兼容本地 service mock 以及部署站点的静态数据
 const proxy = {
-  // 支持值为 Object 和 Array
+  // 支持值为 Object 和 Array1
+  'GET /bins/(.*)': `${myjsonapi}/bins/`,
   'POST /api/currentUser': (req, res) => {
     const userName = req.body;
     if (userName === 'admin') {
@@ -67,15 +69,10 @@ const proxy = {
     },
   ],
   // 企业诚信查询
-  'POST /elastic_sskj/api/credit/org/(.*)': `http://${host}/elastic_sskj/api/credit/org/`,
-  'GET /elastic_sskj/api/credit/org/(.*)': `http://${host}/elastic_sskj/api/credit/org/`,
-  // 不良行为分类(按企业资质分)
-  // 'GET /elastic_sskj/api/credit/org/behfltj/(.*)': `http://${host}/elastic_sskj/api/credit/org/behfltj/`, // getBadBehaviorDataGroupByType
-  // 不良行为分类统计详情
-  // 'GET /elastic_sskj/api/credit/org/behDetail/(.*)': `http://${host}/elastic_sskj/api/credit/org/behDetail/`,
+  'POST /elastic_sskj/api/credit/org/(.*)': `${host}/elastic_sskj/api/credit/org/`,
+  'GET /elastic_sskj/api/credit/org/(.*)': `${host}/elastic_sskj/api/credit/org/`,
   'GET /api/credit/org/statistics/badBehaviorMiniBar': fakeBadBehaviorMiniBar,
   'GET /api/credit/org/statistics/goodBehaviorMiniBar': fakeGoodBehaviorMiniBar,
-  // 'GET /api/credit/org/statistics/badBehaviorDataGroupByType': getBadBehaviorDataGroupByType,
   'GET /api/credit/org/statistics': fakeStatisticsData,
   'GET /api/credit/org/statistics/badBehaviorRankData': fakeBadBehaviorRankData,
   'GET /api/eng/search': getEngList,
@@ -150,6 +147,6 @@ const proxy = {
 };
 
 export default (noProxy ? {
-  "POST /elastic_sskj/*": `http://${host}/`,
-  "GET /elastic_sskj/*": `http://${host}/`,
+  "POST /elastic_sskj/*": `${host}/`,
+  "GET /elastic_sskj/*": `${host}/`,
 } : delay(proxy, 1000));

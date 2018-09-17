@@ -5,8 +5,10 @@ export async function query() {
 }
 
 export async function queryCurrent(params) {
-  return request('/api/currentUser', {
-    method: 'POST',
+  // /api/currentUser
+  return request('/bins/8g76a', {
+    // method: 'POST',
+    method: 'GET',
     body: params,
   });
 }

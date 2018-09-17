@@ -27,38 +27,55 @@ export default {
       rankData: [],
       loading: false,
     },
+    badBehaviorByTypeBarData: [],
+    badBehaviorByTypeRankData: [],
   },
 
   effects: {
     *fetch({ payload }, { call, put }) {
       const statisticsData = yield call(getStatisticsData, payload);
-      yield put({
-        type: 'save',
-        payload: {
-          ...statisticsData,
-        },
-      });
+      if (statisticsData) {
+        yield put({
+          type: 'save',
+          payload: {
+            ...statisticsData,
+          },
+        });
+      }
     },
-    *fetchBehaviorMiniArea({ payload }, { call, put }) {
-      const badBehaviorMiniArea = yield call(getBadBehaviorMiniBar, payload);
+    *fetchGoodBehaviorMiniArea({ payload }, { call, put }) {
       const goodBehaviorMiniArea = yield call(getGoodBehaviorMiniBar, payload);
-      yield put({
-        type: 'saveBehaviorMiniArea',
-        payload: {
-          badBehaviorMiniArea,
-          goodBehaviorMiniArea,
-        },
-      });
+      if (goodBehaviorMiniArea) {
+        yield put({
+          type: 'save',
+          payload: {
+            goodBehaviorMiniArea,
+          },
+        });
+      }
+    },
+    *fetchBadBehaviorMiniArea({ payload }, { call, put }) {
+      const badBehaviorMiniArea = yield call(getBadBehaviorMiniBar, payload);
+      if (badBehaviorMiniArea) {
+        yield put({
+          type: 'save',
+          payload: {
+            badBehaviorMiniArea,
+          },
+        });
+      }
     },
     *fetchDataGroupByDistrict({ payload }, { call, put }) {
       const response = yield call(getStatisticsData, payload);
-      yield put({
-        type: 'saveDataGroupByDistrict',
-        payload: {
-          badBehaviorGroupByDistrict: response.badBehaviorGroupByDistrict,
-          goodBehaviorGroupByDistrict: response.goodBehaviorGroupByDistrict,
-        },
-      });
+      if (response) {
+        yield put({
+          type: 'save',
+          payload: {
+            badBehaviorGroupByDistrict: response.badBehaviorGroupByDistrict,
+            goodBehaviorGroupByDistrict: response.goodBehaviorGroupByDistrict,
+          },
+        });
+      }
     },
 
     // 根据不同企业资质统计不良行为
@@ -77,6 +94,34 @@ export default {
       });
     },
 
+    // 不良行为企业资质统计数据
+    *fetchBadBehaviorBarData({ payload }, { call, put }) {
+      const badBehaviorByTypeBarData = yield call(getBadBehaviorDataGroupByType, payload);
+      console.log(badBehaviorByTypeBarData);
+      if (badBehaviorByTypeBarData) {
+        yield put({
+          type: 'saveBadBehaviorByTypeBarData',
+          payload: {
+            badBehaviorByTypeBarData,
+          },
+        });
+      }
+    },
+
+    // 不良行为排名数据
+    *fetchBadBehaviorRankData({ payload }, { call, put }) {
+      const badBehaviorByTypeRankData = yield call(getBadBehaviorRankData, payload);
+      console.log(badBehaviorByTypeRankData);
+      if (badBehaviorByTypeRankData) {
+        yield put({
+          type: 'saveBadBehaviorByTypeRankData',
+          payload: {
+            badBehaviorByTypeRankData,
+          },
+        });
+      }
+    },
+
     // 不良行为统计数据详情
     *fetchBadBehaviorDataGroupByTypeDetail({ payload }, { call, put }) {
       const response = yield call(getBadBehaviorDataGroupByTypeDetail, payload);
@@ -86,7 +131,9 @@ export default {
       }
       yield put({
         type: 'saveBadBehaviorDataGroupByTypeDetail',
-        payload: detail,
+        payload: {
+          detail,
+        },
       });
     },
 
@@ -117,6 +164,24 @@ export default {
       return {
         ...state,
         badBehaviorByType: payload.badBehaviorByType,
+      };
+    },
+    saveBadBehaviorByTypeBarData(state, { payload }) {
+      return {
+        ...state,
+        badBehaviorByTypeBarData: payload.badBehaviorByTypeBarData.list.map( data => {
+          return {
+            ...data,
+            x: data.type,
+            y: data.data,
+          }
+        }),
+      };
+    },
+    saveBadBehaviorByTypeRankData(state, { payload }) {
+      return {
+        ...state,
+        badBehaviorByTypeRankData: payload.badBehaviorByTypeRankData,
       };
     },
     saveBadBehaviorDataGroupByTypeDetail(state, { payload }) {

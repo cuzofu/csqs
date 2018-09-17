@@ -1,7 +1,5 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'dva';
-import { stringify } from 'qs';
-import { routerRedux } from 'dva/router';
 import {
   Row,
   Col,
@@ -45,7 +43,7 @@ const creditLevelList = [
   loading: loading.effects['creditOrgSearch/fetch'],
 }))
 @Form.create()
-export default class Credit extends PureComponent {
+export default class Credit extends Component {
   state = {
     expandForm: false,
     selectedRows: [],
@@ -55,9 +53,11 @@ export default class Credit extends PureComponent {
   };
 
   componentDidMount() {
+
     const { dispatch } = this.props;
     dispatch({
       type: 'creditOrgSearch/fetch',
+      payload: {},
     });
   }
 

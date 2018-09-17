@@ -101,14 +101,17 @@ for (let i = 0; i < 7; i += 1) {
 @connect(({ creditOrgStatistics, loading }) => ({
   creditOrgStatistics,
   loading: loading.effects['creditOrgStatistics/fetch'],
-  badBehaviorByTypeLoading: loading.effects['creditOrgStatistics/fetchBadBehaviorByType'],
+  badBehaviorByTypeBarDataLoading: loading.effects['creditOrgStatistics/fetchBadBehaviorBarData'],
+  badBehaviorByTypeRankDataLoading: loading.effects['creditOrgStatistics/fetchBadBehaviorRankData'],
   behaviorMiniAreaLoading: loading.effects['creditOrgStatistics/fetchBehaviorMiniArea'],
+  goodBehaviorMiniAreaLoading: loading.effects['creditOrgStatistics/fetchGoodBehaviorMiniArea'],
+  badBehaviorMiniAreaLoading: loading.effects['creditOrgStatistics/fetchBadBehaviorMiniArea'],
 }))
 @Form.create()
 export default class Statistics extends Component {
   state = {
-    badBehaviorByTypeTimeInterval: getTimeDistance('month'),
-    rangePickerValue: getTimeDistance('month'),
+    badBehaviorByTypeTimeInterval: getTimeDistance('year'),
+    rangePickerValue: getTimeDistance('year'),
     modal: {
       title: '',
       visible: false,
@@ -141,26 +144,34 @@ export default class Statistics extends Component {
       },
     });
     this.props.dispatch({
-      type: 'creditOrgStatistics/fetchBehaviorMiniArea',
+      type: 'creditOrgStatistics/fetchGoodBehaviorMiniArea',
       payload: {
         startTime,
         endTime,
       },
     });
     this.props.dispatch({
-      type: 'creditOrgStatistics/fetchBadBehaviorByType',
+      type: 'creditOrgStatistics/fetchBadBehaviorMiniArea',
+      payload: {
+        startTime,
+        endTime,
+      },
+    });
+    this.props.dispatch({
+      type: 'creditOrgStatistics/fetchBadBehaviorBarData',
       payload: {
         zzType: zzType.code,
         startTime,
         endTime,
       },
-    })
-  }
-
-  componentWillUnmount() {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'creditOrgStatistics/clear',
+    });
+    this.props.dispatch({
+      type: 'creditOrgStatistics/fetchBadBehaviorRankData',
+      payload: {
+        zzType: zzType.code,
+        startTime,
+        endTime,
+      },
     });
   }
 
@@ -302,8 +313,17 @@ export default class Statistics extends Component {
     const { zzType } = this.state;
     const startTime = timeInterval[0].format("YYYY-MM-DD");
     const endTime = timeInterval[1].format("YYYY-MM-DD");
+
     this.props.dispatch({
-      type: 'creditOrgStatistics/fetchBadBehaviorByType',
+      type: 'creditOrgStatistics/fetchBadBehaviorBarData',
+      payload: {
+        zzType: zzType.code,
+        startTime,
+        endTime,
+      },
+    });
+    this.props.dispatch({
+      type: 'creditOrgStatistics/fetchBadBehaviorRankData',
       payload: {
         zzType: zzType.code,
         startTime,
@@ -349,7 +369,15 @@ export default class Statistics extends Component {
     const startTime = timeInterval[0].format("YYYY-MM-DD");
     const endTime = timeInterval[1].format("YYYY-MM-DD");
     this.props.dispatch({
-      type: 'creditOrgStatistics/fetchBadBehaviorByType',
+      type: 'creditOrgStatistics/fetchBadBehaviorBarData',
+      payload: {
+        zzType: zzType.code,
+        startTime,
+        endTime,
+      },
+    });
+    this.props.dispatch({
+      type: 'creditOrgStatistics/fetchBadBehaviorRankData',
       payload: {
         zzType: zzType.code,
         startTime,
@@ -429,9 +457,16 @@ export default class Statistics extends Component {
     const endTime = badBehaviorByTypeTimeInterval[1].format("YYYY-MM-DD");
 
     this.props.dispatch({
-      type: 'creditOrgStatistics/fetchBadBehaviorByType',
+      type: 'creditOrgStatistics/fetchBadBehaviorBarData',
       payload: {
-        // 资质类型(例：4201)
+        zzType: evl,
+        startTime,
+        endTime,
+      },
+    });
+    this.props.dispatch({
+      type: 'creditOrgStatistics/fetchBadBehaviorRankData',
+      payload: {
         zzType: evl,
         startTime,
         endTime,
@@ -499,34 +534,39 @@ export default class Statistics extends Component {
         badBehaviorGroupByDistrict,
         goodBehaviorGroupByDistrict,
         orgCreditDataLast12Month,
-        badBehaviorByType,
-
+        // badBehaviorByType,
+        badBehaviorByTypeBarData,
+        badBehaviorByTypeRankData,
         badBehaviorMiniArea,
         goodBehaviorMiniArea,
       },
       loading,
-      badBehaviorByTypeLoading,
-      behaviorMiniAreaLoading,
+      badBehaviorByTypeBarDataLoading,
+      badBehaviorByTypeRankDataLoading,
+      goodBehaviorMiniAreaLoading,
+      badBehaviorMiniAreaLoading,
     } = this.props;
 
-    const badBehaviorByTypeBarData = [];
-    if (badBehaviorByType && badBehaviorByType.barData && badBehaviorByType.barData.list) {
-      badBehaviorByType.barData.list.forEach( data => {
-        badBehaviorByTypeBarData.push({
-          ...data,
-          x: data.type,
-          y: data.data,
-        });
-      });
-    }
+    // const badBehaviorByTypeBarData = [];
+    // if (badBehaviorByType && badBehaviorByType.barData && badBehaviorByType.barData.list) {
+    //   badBehaviorByType.barData.list.forEach( data => {
+    //     badBehaviorByTypeBarData.push({
+    //       ...data,
+    //       x: data.type,
+    //       y: data.data,
+    //     });
+    //   });
+    // }
     let totalBadBehaviorLastYear = 0;
     let totalGoodBehaviorLastYear = 0;
-    if (!behaviorMiniAreaLoading) {
-      badBehaviorMiniArea.forEach( val => {
-        totalBadBehaviorLastYear += val.y
-      });
+    if (!goodBehaviorMiniAreaLoading) {
       goodBehaviorMiniArea.forEach( val => {
         totalGoodBehaviorLastYear += val.y
+      });
+    }
+    if (!badBehaviorMiniAreaLoading) {
+      badBehaviorMiniArea.forEach( val => {
+        totalBadBehaviorLastYear += val.y
       });
     }
 
@@ -594,7 +634,7 @@ export default class Statistics extends Component {
             <Col {...topColResponsiveProps}>
               <ChartCard
                 onClick={() => this.badBehaviorClick(true)}
-                loading={behaviorMiniAreaLoading}
+                loading={badBehaviorMiniAreaLoading}
                 bordered={false}
                 title="不良行为次数"
                 action={
@@ -612,7 +652,7 @@ export default class Statistics extends Component {
             <Col {...topColResponsiveProps}>
               <ChartCard
                 onClick={() => this.goodBehaviorClick(true)}
-                loading={behaviorMiniAreaLoading}
+                loading={goodBehaviorMiniAreaLoading}
                 bordered={false}
                 title="良好行为次数"
                 action={
@@ -631,12 +671,13 @@ export default class Statistics extends Component {
         </Fragment>
 
         <Card loading={loading} bordered={false} className={styles.spacing}>
-          <Spin spinning={badBehaviorByTypeLoading}>
-            <div className={styles.behaviorCard}>
-              <Tabs tabBarExtraContent={badBehaviorByTypeExtra} size="large" tabBarStyle={{ marginBottom: 24 }}>
-                <TabPane tab={`不良行为分类统计(${zzType.name})`} key="badBehaviorGroupByType">
-                  <Row>
-                    <Col xl={12} lg={12} md={24} sm={24} xs={24}>
+          <div className={styles.behaviorCard}>
+            <Tabs tabBarExtraContent={badBehaviorByTypeExtra} size="large" tabBarStyle={{ marginBottom: 24 }}>
+              <TabPane tab={`不良行为分类统计(${zzType.name})`} key="badBehaviorGroupByType">
+                <Row>
+                  <Col xl={12} lg={12} md={24} sm={24} xs={24}>
+                    <Spin spinning={badBehaviorByTypeBarDataLoading}>
+
                       <div className={styles.behaviorBar}>
                         <Bar
                           height={295}
@@ -644,13 +685,15 @@ export default class Statistics extends Component {
                           onPlotClick={(ev) => this.onBadBehaviorBarClick(ev)}
                         />
                       </div>
-                    </Col>
-                    <Col xl={12} lg={12} md={24} sm={24} xs={24}>
+                    </Spin>
+                  </Col>
+                  <Col xl={12} lg={12} md={24} sm={24} xs={24}>
+                    <Spin spinning={badBehaviorByTypeRankDataLoading}>
                       <div className={styles.behaviorRank}>
                         <h4 className={styles.rankingTitle}>不良行为排名</h4>
                         <ul className={styles.rankingList}>
                           {
-                            badBehaviorByType.rankData.map((item, i) => {
+                            badBehaviorByTypeRankData.map((item, i) => {
                               if (i < 5) {
                                 return (
                                   <li key={item.id}>
@@ -664,12 +707,12 @@ export default class Statistics extends Component {
                           }
                         </ul>
                       </div>
-                    </Col>
-                  </Row>
-                </TabPane>
-              </Tabs>
-            </div>
-          </Spin>
+                    </Spin>
+                  </Col>
+                </Row>
+              </TabPane>
+            </Tabs>
+          </div>
         </Card>
 
         <Card loading={loading} bordered={false} bodyStyle={{ padding: 0 }} className={styles.spacing}>
